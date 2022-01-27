@@ -64,42 +64,42 @@
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal0">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/portfolio/cabin.png" alt="Lab1"/>
+                            </div><img class="img-fluid" src="assets/img/Lab1.png" alt="Lab1"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal1">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/portfolio/cake.png" alt="Lab2"/>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab2"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal2">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/portfolio/circus.png" alt="Circus Tent"/>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Circus Tent"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal3">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/portfolio/game.png" alt="Controller"/>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Controller"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal4">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/portfolio/safe.png" alt="Locked Safe"/>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Locked Safe"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal5">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/portfolio/submarine.png" alt="Submarine"/>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Submarine"/>
                         </div>
                     </div>
                 </div>
@@ -115,16 +115,37 @@
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
                                     <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab1</h2>
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab 1: The Artemis Board</h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
                                         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
                                         <div class="divider-custom-line"></div>
                                     </div>
-                                    <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/cabin.png" alt="Lab1"/>
+                                    
                                     <!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p>
+                                    <p align="left">The purpose of this lab is to help us setup IDE and run some simple scripts on the Artemis board. By running blink, serial communiction, analog read of the temperature sensor, and frequency measurement by the Pulse Density Microphone. </p>
+                                    <iframe src = "https://www.youtube.com/embed/RLJkmN6ZvMs"
+                                    width="540" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">In this first demo, I blinked the board. To succesffuly compile the script on my Mac I need to upgrade my Arduino IDE from 1.8.9 and decrease the SVL baud rate to 115200 bit per second. </p>
+                                    <iframe src = "https://www.youtube.com/embed/Ba4FY0rEfFk"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">In the second example, I ran the example code on serial communication. Since we are only using the serial commnication on the Type-C cable and the example code printed out messages on both UART channels, I modified the code so that everything printed out on the one from the USB. The <code>Serial.print()</code> function will allow you to send out information over UART. The video demostrates both input and output with UART. </p>
+                                    <iframe src = "https://www.youtube.com/embed/HXBCVLbETWs"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">In the third demo, I ran the analogRead example code and visualized gradual temperature change on the temperature sensor caused by touching the chip on the serial monitor. Reading the analog value on an analog pin can be accomplished by calling the <code>analogRead()</code> function.</p>
+                                    <iframe src = "https://www.youtube.com/embed/MVGxjuh36y8"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left"> The fourth demo shows the display of the highest frequency heard by the microphone on the board. After I ran the MicrophoneOutput example code, the highest frequency of the surrounding sound was displayed on the serial moniter. In the code, it first converts the PDM samples to floats in this line <p> <code>g_fPDMTimeDomain[2 * i] = pi16PDMData[i] / 1.0;</code> 
+                                    <p align="left">and then perform FFT with the <code>arm_cfft_f32</code> function. Lastly, it finds the the frequency bin with the largest magnitude and prints it on the serial monitor. As I whistled in higher and higher frequency, the number of the serial monitor increases. </p>
+                                    <iframe src = "https://www.youtube.com/embed/q9I3fyrfy0I "
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">In the last demo, I slightly modified the microphoneOutput example. By using and <code>if/else</code> conditional statement with the variable <code>ui32MaxIndex</code>. 
+                                    Code snippet that I added: 
+                                    <img class="img-fluid" src="assets/img/Lab1Code.png">
+                                    </p><p align="left">As you can see in the video, the on board led blinked when I whistled. 
+                                    <p>
+
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
