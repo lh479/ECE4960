@@ -71,7 +71,7 @@
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal1">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab2"/>
+                            </div><img class="img-fluid" src="assets/img/LAB2.png" alt="Lab2"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
@@ -163,16 +163,61 @@
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
                                     <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab2</h2>
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab2: Bluetooth</h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
                                         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
                                         <div class="divider-custom-line"></div>
                                     </div>
-                                    <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/cake.png" alt="Lab2"/>
-                                    <!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p>
+                                    
+                                    <!-- Portfolio Modal - Lab2-->
+                                    <p align="left">The objective of this lab is to establish Bluetooth communication between the Artemis and the computer. We need to implement Arduino code on the Artemis side and Python in Jupyter Notebook on the computer. The purpose of this is to offload computation to the computer later when we are performing computationally intensive tasks on the robot.</p>
+                                    <p class="pre-wrap lead mb-3">Setup</p>
+                                    <p align="left">The first step was to set up the environment on the computer side. I initially tried to install Jupyter Lab on my Mac computer. However, since my Mac was still running MacOs 10, Jupyter Lab failed to open.</p>
+                                    <img class="img-fluid" src="assets/img/Lab2:1.png">
+                                    <p align="left">I eventually switched to Ubuntu 20.02 and successfully ran Jupyter Server in my virtual environment. </p>
+                                    <p align="left">The MCU setup was much easier. We just need to install the ArduinoBLE library and upload <code>ble_arduino.ino</code> to the Artemis board. If uploaded successfully, we should be able to see the MAC address of the board on Serial Monitor.</p>
+                                    <p class="pre-wrap lead mb-3">Bluetooth Connection</p>
+                                    <p align="left">To establish the connection between the Artemis board and the computer with BLE, I matched the MAC address defined in connection.yaml to the one on Arduino serial monitor. This message should be displayed when the connection is established.</p>
+                                    <img class="img-fluid" src="assets/img/Lab2:2.png">
+                                    <p class="pre-wrap lead mb-3">Demo</p>
+                                    <p align="left">With the help of the demo code, I performed the following tasks: receiving float and string using <code>receive_float()</code> and <code>receive_string()</code> functions, sending commands, and disconnecting. Here is a short video running the tasks in the demo code.</p>
+                                    <iframe src = "https://www.youtube.com/embed/j6YbJds9qWs"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p class="pre-wrap lead mb-3">Tasks</p>
+                                    <p align="left">Before I demonstrate my tasks, I need to run the script to import necessary modules and run the connect command. </p>
+                                    <iframe src = "https://www.youtube.com/embed/FGkSLJ77dJ4"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">TASK ONE: 
+                                        The first task is to send an <code>ECHO</code> command with a string input that will trigger the Artemis board to return an augmented string to the computer. On the Artemis side, commands are handled by the switch/case statement. In the <code>ECHO</code> case, I first initialized a char array and then use the get value function to extract the string from the command string. After obtaining the input string, the next step is to augment the array and send it back to the computer. First I emptied the contents of the tx_estring_value, then use <code>append()</code> function to augment it. Lastly, I send the augmented string out with the writeValue commend. For debugging purposes, I also print it on the serial monitor. 
+                                        </p>
+                                        <img class="img-fluid" src="assets/img/ECHO.png">
+                                    <p align="left">In my code, I augmented my message with “My boss said:”, so the board would repeat my message while referring me as his boss. In this demo video, I sent the commend using <code>send_commend(CMD.ECHO, “hi”)</code> and I got "My boss said: hi” from the board. </p>
+                                    <iframe src = "https://www.youtube.com/embed/_06IpDADzYU"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">TASK TWO: 
+                                        Sending three floats is very similar to the example <code>SEND_TWO_INTS</code>. I first declared three float variables and then used <code>get_next_value(float)</code> function to write the three floats to the variables. On the computer side, I sent three floats 1.2, 3.42, and -21.32 to cover test cases with different decimal places and different signs.                                         
+                                        </p>
+                                        <img class="img-fluid" src="assets/img/Send3F.png">
+                                    <iframe src = "https://www.youtube.com/embed/vQMTR___Y1E"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">TASK THREE: 
+                                        The notify mechanism in BLE will trigger the handler (or callback function) when data is changed. It is similar to an interrupt and an ISR. The only thing we need to do on the Arduino side is to define a UUID associated with a float. In this case, I am using the declared tx_characteristic_float, which increments 0.5 every half a second. 
+                                        On the computer side, I called the <code>start_notify(uuid, handler)</code> function. It was quite confusing for me that the handler requires two parameters, yet the notify function only takes uuid and the handler itself as inputs. I later discovered that we could declare an input for the handler function outside the scope of the function. I used <code>read(uuid)</code> function to read the input byte array and store it in variable inputf as the second input of the handler function. The handler function then basically converted the byte array into float and store it in a global variable. The global variable will keep updating unless the function <code>stop_notify(uuid)</code> is called. 
+                                        <img class="img-fluid" src="assets/img/notify.png">
+                                        </p>
+                                    <iframe src = "https://www.youtube.com/embed/FrYCEU2hdT4"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left"> Remember to disconnect. 
+                                        </p>
+                                    <iframe src = "https://www.youtube.com/embed/eQ1JXguyodQ"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">TASK FOUR: 
+                                        The two approaches can all successfully deliver a float with the same accuracy. When sending numbers one by one, both approaches have identical speeds. The benefit of using <code>receive_float()</code> is that, it is more direct and does not require data type conversion. This approach is ideal for debugging but expensive computationally. If we send a large number of data quickly, it is more memory efficient and faster to combine sensor readings into a single <code>BLECStringCharactersitic</code> on the Arduino side and unpacked it when it reached the computer side. This would be useful when we need to stream, for example, accelerometer readings rapidly when the robot is moving fast. We need to be aware of the max message size (150 byte) when implementing this.                                        
+                                        </p>
+
+
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
