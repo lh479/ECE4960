@@ -78,7 +78,7 @@
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal2">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Circus Tent"/>
+                            </div><img class="img-fluid" src="assets/img/Lab3.png" alt="Lab3"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
@@ -235,17 +235,100 @@
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
                                     <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary mb-0">Circus Tent</h2>
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab3: Sensors</h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
                                         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
                                         <div class="divider-custom-line"></div>
                                     </div>
-                                    <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/circus.png" alt="Circus Tent"/>
-                                    <!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p>
+                                    <!-- Lab3 - Text-->
+                                    <p class="pre-wrap lead mb-3">Time-of-Flight Sensor </p>
+                                    <p align="left">Wiring </p>
+                                    <img class="img-fluid" src="assets/img/Lab3Wiring.jpg">
+                                    <p align="left">1. I ran the I2C example script to scan I2C addresses for the sensors. When I turned both of them on, the serial window displayed all the I2C addresses. When I turned one of them off, I found address <code>0x29</code>. This is expected according to the Sparkfun page for this sensor.</p>
+                                    <p align="left">2. The ToF sensor has three distance modes. Short distance mode is more immune to ambient light, but its maximum ranging distance is limited to 1.3m, compared to 4m of the long distance mode. Meanwhile, long distance mode allows the longest possible ranging distance but is easier to be impacted by ambient light. Different distance modes also affect the timing budget. In short distance mode, 2oms is the minimum timing budge and 140ms is the timing budget allows for the long distance mode. Increasing the timing budget increases the average power consumption and can improve the repeatability error. On the final robot, both modes would be helpful. We could use one mode for each TOF sensor and perform sensor fusion. Given the size of the robot, we are probably going to operate at short or short/mid range mode.</p>
+                                    <p align="left">3. I examined the sensor range, accuracy, repeatability, and ranging time. I also tried to compare sensor reading with different light conditions and surface textures. I used a 1.3-meter tape measure to measure the distance of a flat surface from the TOF sensor mounted vertically. All testing data below are based on the average of 100 sample points per measurement. </p>
+                                    <img class="img-fluid" src="assets/img/Lab3:1.png">
+                                    <p align="left">In short distance mode, the sensor has a range between 30mm to 1250 with less than 10% of error. The accuracy was consistently high until it reaches more than 800mm, at which the percentage error starts increasing linearly. </p>
+                                    <img class="img-fluid" src="assets/img/Lab3:2.png">
+                                    <p align="left">The standard deviation of 100 sample points at each distance can tell us how steady the measurement is at that distance. Similar to the accuracy curve, the consistency of measurement decreases beginning at the 800mm point exponentially. </p>
+                                    <img class="img-fluid" src="assets/img/Lab3:3.png">
+                                    <p align="left">In this chart, I compared the TOF collecting data in different environments and from different surfaces. We can see that less ambient light will make the data more accurate and consistent and different surface textures correspond to different accuracy because it deflects light a bit differently.  </p>
+                                    <p align="left">The standard deviation of 100 sample points at each distance can tell us how steady the measurement is at that distance. Similar to the accuracy curve, the consistency of measurement decreases beginning at the 800mm point exponentially.  </p>
+                                    <p align="left">I also try to print out the ranging time of the sensor. The time between when <code>startRanging()</code> is called to when <code>stopRanging()</code> is called does not change linearly with the obstacle distance. If the obstacle is in range, the ranging time is about 52144 microseconds and if the obstacle is out of range, the ranging time is 32064.  </p>
+                                    <p align="left">I accomplished daisy chaining the two TOF sensors by manually toggling the XSHUT pins with GPIOs at appropriate times. I first turned all the sensors off by pulling their XSHUT pins LOW and then turning them on one at a time while setting the I2C address of the first one to prevent address conflict. To ensure this process is successful, I printed out the output of <code>distanceSensor1.getI2CAddress()</code> to see the new address and using this logic:
+                                    <code>
+                                        if (distanceSensor1.getI2CAddress() !=distanceSensor2.getI2CAddress()) {
+                                            Serial.println("No conflicts!");
+                                        }</code>
+                                        to ensure that the addresses are not conflicting. 
+                                         </p>
+                                    <p align="left">Demo video for two TOF sensors working at the same time： </p>
+                                    <iframe src = "https://www.youtube.com/embed/wthItQdLOUI"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p class="pre-wrap lead mb-3">Inertial Measurement Unit </p>
+                                    <p align="left">After I wired the IMU to the Artemis board I scan the I2C channel to find the sensor’s address. I found <code>0x68</code>, which is expected because the datasheet indicated that the I2C address for this sensor is either <code>1101000</code> or <code>1101001</code> in binary depending on the AD0 value. To run Example1_Basics.ino, we need to change the AD0_VAL to 0 since from the datasheet we learned that address <code>0x68(1101000)</code> corresponds to <code>AD0 = 0</code>.</p>
+                                    <p align="left">I am able to see both scaled and raw accelerometer and gyroscope data when running the example code. I plotted them out on the serial plotter so that I can visualize them. In the accelerator plot, we can see some noisy acceleration data in X, Y, and Z directions. Depending on the orientation of the sensor, some acceleration is always detected when the sensor is stationary due to gravity. 
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/Lab3Acc.png">
+                                    <p align="left">The gyroscope measures the angular velocity. Its plot looks noisy and it is very sensitive to changes in velocity without any filtering. </p>
+                                    <img class="img-fluid" src="assets/img/Lab3Gyro.png">
+                                    <p align="left">Accelerator</p>
+                                    <p align="left">Pitch and roll are calculated by these lines of code: </p>
+                                    <p align="left"><code>pitch = 180 * atan2(myICM.accX(),myICM.accZ())/M_PI;</code></p>
+                                    <p align="left"><code>roll  = 180 * atan2(myICM.accY(),myICM.accZ())/M_PI;</code></p>
+                                    <p align="left">We cannot calculate the yaw value with accelerometer data because we can’t use gravity as a reference acceleration in the XY plane.</p>
+                                    <p align="left">In this demo video, I am showing the output at {-90, 0, 90} degrees pitch and roll. The output is relatively accurate</p>
+                                    <iframe src = "https://www.youtube.com/embed/MuK-JwMk45o"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">The next step is calibration. I measured pitch and roll to have the range of pitch[-89,89], Roll [-88,85], which means it has an accuracy of >95%. To calibrate it, I used the map function. For example, to map pitch to [-90,90]: <code>pitch = map(pitch, -89, 89, -88, 85);</code> </p>
+                                    <p align="left">Gyroscope</p>
+                                    <p align="left">In order to find the frequency of the unwanted noise in the output signal, we need to perform Fast Fourier Transform on the dataset. I set a timer in the code to make it stop collecting data after 10 seconds so that the data length is known and consistent. My dataset has a length of 288 and a sampling period of 3.3150e-2s. I exported the data and performed FFT in Matlab. 
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/Lab3Matlab.png">
+                                    <p align="left">I performed FFT on a noisy dataset, which I collected while tapping the sensor, and a dataset with limited noise to distinguish the noise frequency buckets in the frequency spectrum. </p>
+                                    <img class="img-fluid" src="assets/img/NoiseP.PNG">
+                                    <img class="img-fluid" src="assets/img/NoiseR.PNG">
+                                    <p align="left">I also did FFT on a regular dataset.</p>
+                                    <img class="img-fluid" src="assets/img/NoNoiseP.PNG">
+                                    <img class="img-fluid" src="assets/img/NoNoiseR.PNG"> 
+                                    <p align="left">As you can see, the useful data are mostly at less than 1Hz. If fc = 1, RC = 0.159. Since alpha = T/(T+RC)  and T = 0.03315s, <code>alpha = 0.03315/(0.03315+0.159) = 0.1725</code>. With this alpha, I am able to achieve a plot with less noise:</p>
+                                    <iframe src = "https://www.youtube.com/embed/Bz7A5F3gzOM"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">We can tell the alpha value is appropriate because the readings react to changes in a short enough time, so the time constant is not too big.</p>
+                                    <p align="left">Gyroscope</p>
+                                    <p align="left">Gyroscope provides us the angular velocity of the sensor. We can simply multiply the velocity with the dt between the sampling intervals to find the angular displacement. We can find dt with the help of a variable and the <code>micros()</code> function: </p>
+                                    <p align="left"><code>dt = (micros() - last_time) /1000000;</code></p>
+                                    <p align="left"><code>last_time = micros(); </code></p>
+                                    <p align="left">and calculate roll, pitch and yaw with: </p>
+                                    <p align="left"><code>roll_g = roll_g + myICM.gyrX() * dt;                                    </code></p>
+                                    <p align="left"><code>pitch_g = pitch_g - myICM.gyrY() * dt;
+                                    </code></p>
+                                    <p align="left"><code>yaw_g = yaw_g + myICM.gyrZ() * dt;
+                                    </code></p>
+                                    <p align="left">The sign between the two terms could change depending on the sensor orientation.</p>
+                                    <p align="left"><code></code></p>
+                                    <p align="left">This serial plot is plotting the angle displacement output calculated from the accelerometer and gyroscope without any filter. One can see that the output calculated from the accelerometer is much noisier than the one from the gyroscope. </p>
+                                    <img class="img-fluid" src="assets/img/lab3gryoacc.png">
+                                    <p align="left">We can do a more direct comparison between the filtered data by accelerometer and gyroscope. </p>
+                                    <iframe src = "https://www.youtube.com/embed/Ge62Un_VXSE"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">Although the data synchronized at the beginning of the demo, there are a few distinguishing differences between them. 1. Gyroscope data rely on the initial condition, but accelerometer does not. 2. Though the gyroscope is less noisy, its data are likely to drift, especially after some rapid changes in data. Meanwhile, accelerometer data will not drift since it uses gravity as the reference. 3. Data from the gyroscope can go above 90degree and the accelerometer’s data has a range between [-90,90]. </p>
+                                    <p align="left">I tried decreasing the sampling frequency of the system. Obviously, data will be displayed at a slower rate. More importantly, the increase in sampling interval introduced more noise and inaccuracies in approximating the angular displacement. Thus, the data is more likely to drift. </p>
+
+                                    <p align="left">Since both sensors have pros and cons, we can use a complementary filter to produce a final data output with less noise and high accuracy. Here, we need to double-check the sign of the myICM.gyrY() term. Since the frequency of potential noises is similar to the one we found, we could just use the same alpha value. </p>
+                                    <p align="left"><code>pitch = (pitch - myICM.gyrY()*dt) * (1-alpha) + pitch_a * alpha;
+                                    </code></p>
+                                    <p align="left"><code>roll = (roll + myICM.gyrX()*dt) * (1-alpha) + roll_a * alpha;
+                                    </code></p>
+                                    <img class="img-fluid" src="assets/img/combineAccGyro.png">
+                                    <p align="left">In this plot, the red line is data from the gyroscope, the blue curve is the low pass accelerator data, and the green one is from the output of the complementary filter. The red curve is drifted and the blue curve is a bit noisier than the green one.  </p>
+                                    <iframe src = "https://www.youtube.com/embed/618lhaL_uTU"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">In this final demo video, I demonstrated the IMU getting accurate pitch and roll in the full range with relatively low noise. The yaw value (the green line), is only computed from the gyroscope data, so it is subject to drifting.   </p>
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
+                                    
                                 </div>
                             </div>
                         </div>
