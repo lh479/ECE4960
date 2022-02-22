@@ -85,7 +85,7 @@
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal3">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Controller"/>
+                            </div><img class="img-fluid" src="assets/img/Lab4.png" alt="Lab4"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
@@ -243,6 +243,8 @@
                                         <div class="divider-custom-line"></div>
                                     </div>
                                     <!-- Lab3 - Text-->
+                                    <p class="pre-wrap lead mb-3">Objective </p>
+                                    <p align="left">The purpose of this lab is to let us familiarize ourselves with TOF and IMU, the two important sensors that we will equip on the robot. We should first understand the sensor so that we can use it to collect useful data such as the distance of obstacles and pitch, roll, and yaw. Furthermore, we should learn the limit and constrain of our sensors such as sample rate, noise, range, and accuracy. 
                                     <p class="pre-wrap lead mb-3">Time-of-Flight Sensor </p>
                                     <p align="left">Wiring </p>
                                     <img class="img-fluid" src="assets/img/Lab3Wiring.jpg">
@@ -345,16 +347,64 @@
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
                                     <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary mb-0">Controller</h2>
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab4: Characterize Your Car</h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
                                         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
                                         <div class="divider-custom-line"></div>
                                     </div>
-                                    <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/game.png" alt="Controller"/>
-                                    <!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p>
+                                    <!-- Lab4 - Text-->
+                                    <p class="pre-wrap lead mb-3">Objective </p>
+                                    <p align="left">After learning about sensors in our previous lab, we learnt about the potential and limitations of our car in this lab. With the help of the remote control and IMU, my partner (Jack Defay) and I designed a series of tests to explore the ability of the RC car. 
+                                    <p class="pre-wrap lead mb-3">Testing Method </p>
+                                    <p align="left">While most of the tests relied on basic lab equipment such as rulers, scales, and stopwatches, we used Bluetooth to stream data from IMU during our test runs to obtain more interesting and informative data. </p>
+                                    <p align="left">To establish such a connection, we used the <code>tx_estring_value.append(float value) </code>function and <code>tx_characteristic_string.writeValue(tx_estring_value.c_str()) </code>function to update the <code>BLE_TX_STRING</code> with <code>uuid “f235a225-6735-4d73-94cb-ee5dfce9ba83”</code>. On the Python side, we called the <code>start_notify</code> function to access that uuid and stream the changed data. We packaged all the float data into a string and update it at each cycle so the data is well-formatted and more memory efficient. Such connection enabled us to test the robot untethered while keeping all the sensor values well documented. </p>
+                                    <p align="left">Since gyroscope reading tends to drift a lot while we are transferring the robot before testing, I made this <code>ZEROGYRO</code> commend so that we can zero the initial condition before each test to obtain cleaner test results. </p>
+                                    <img class="img-fluid" src="assets/img/lab4:1.png">
+                                    <p class="pre-wrap lead mb-3">Dimension </p>
+                                    <p align="left">I used rulers and calipers to obtain accurate measurements for the car. Dimensions are important in robotics since it defines the local frame of the robot and directly affects the robot’s dynamics. Dimensions are shown in this picture in millimeters. </p>
+                                    <img class="img-fluid" src="assets/img/lab4:2.png">
+                                    <p class="pre-wrap lead mb-3">Weight </p>
+                                    <p align="left">I used a scale to measure the weight of the robot and the weights of its battery. 
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/IMG_5500.jpg">
+                                    <img class="img-fluid" src="assets/img/IMG_5502.jpg">
+                                    <p class="pre-wrap lead mb-3">Battery </p>
+                                    <p align="left">To understand the battery and the power consumption of car better, I did an unloaded discharged test. I used the 650mAh 1S Lipo battery that comes with the car and run the car unloaded continuously. </p>
+                                    <img class="img-fluid" src="assets/img/lab4:7.png">
+                                    <p align="left">I obtained this discharge curve, which is a quite normal Lipo discharge curve. The car requires 3V minimal to run. A 3V battery typically corresponds to 10% SoC(state of charge). If we hang the car up with wheels off the ground, we get about 20 minutes of run time. I already tried to power the car with a DC power supply, but it doesn’t seem to be working due to the high ripple in the current drain.</p>
+                                    <p class="pre-wrap lead mb-3">Turning Resolution </p>
+                                    <p align="left">We wanted to figure out the turning resolution of the robot with remote control and IMU sensor so that we can better control the robot’s turning motion in the future. With gyroscope data (plotted below), we are able to see how much the robot turns when we press the button on the remote as short as possible.  </p>
+                                    <img class="img-fluid" src="assets/img/Lab4:3.png">
+                                    <p align="left">After using all the data and calculating the delta yaw at each turn, I found that the minimum turning with the remote control is about 40 degrees. </p>
+                                    <img class="img-fluid" src="assets/img/Lab4:4.png">
+                                    <p class="pre-wrap lead mb-3">Ground Flipping </p>
+                                    <p align="left">In this task, we would like to find out the minimum runup distance require to flip the RC car. To visualize the flipping motion, we plot the gyroscope data out during the run-up and flipping process.  </p>
+                                    <img class="img-fluid" src="assets/img/Lab4:5.png">
+                                    <p align="left">As you can see, the robot performed a 360 flip here. The steps behind the flipping motion involve 1. The car to</p>
+                                    <p align="left">The steps behind the flipping motion involve 1. The car ramps up to a certain speed. 2. The car breaks and the back of the car will be lifted up due to inertia. 3. The front wheel starts to spin in a reverse direction, while the back of the car keeps going to the front in the air. 4. Finish flipping. Given this process, the most important parameter would be the lowest initial speed. We characterized this by starting the car from a full stop and calculating the minimal distance to flip. We took videos to check the run-up distance at the frame that the car starts to flip and we obtained the following data. </p>
+                                    <img class="img-fluid" src="assets/img/Lab4:6.png">
+                                    <p align="left">From the data from the 18 trials, 15 of them succeeded while 3 of them failed. We can see that 3 feet should be adequate for the robot to run up and flip.</p>
+                                    <p align="left">Testing video:</p>
+                                    <iframe src = "https://www.youtube.com/embed/WovTeWXbvu8"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p class="pre-wrap lead mb-3"> Ramp-Up Time</p>
+                                    <p align="left">From observation, we concluded that the car ramps up to its highest speed in roughly 10 feet. We took multiple videos and calculated the time difference between the frame that the car started and the frame that the car crossed the 10 feet line. The data showed that the car took an average of 1.24 seconds to ramp up. The data has a small standard deviation of 1.108, so it is consistent.</p>
+                                    <p align="left">Testing video:</p>
+                                    <iframe src = "https://www.youtube.com/embed/umNwGOdhxLk"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p class="pre-wrap lead mb-3"> Bi-Pedal Motion</p>
+                                    <p align="left"> During testing, we discovered this interesting motion of the car that happens when the car is sideway. When we oscillate between the two turning directions quickly, the car will achieve fish-like locomotion.</p>
+                                    <iframe src = "https://www.youtube.com/embed/y_OgnBC79zs"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">With the help of the IMU, we are able to track the pitch of the car when performing such a motion. 
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/Lab4:8.png">
+                                    <p align="left">Each movement can be further broken down into left commend, right commend, and left commend. We characterized this motion but counting the direction of the left and right spinning of the motor. We compared the good runs (red curves) and bad runs (blue curves) in the curves below and found the optimal range for motor spinning duraction to be around 0.3 seconds. Later when we are controlling the robot with PWM signals, we can ensure such duraction when it is doing the bipedal movement. 
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/Lab4:9.png">
+
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
