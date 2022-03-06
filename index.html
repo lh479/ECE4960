@@ -92,7 +92,7 @@
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal4">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Locked Safe"/>
+                            </div><img class="img-fluid" src="assets/img/Lab5.png" alt="Lab5"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
@@ -421,17 +421,102 @@
                         <div class="container">
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
-                                    <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary mb-0">Locked Safe</h2>
+                                    <!-- Lab 5-->
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab5: Open Loop Control</h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
                                         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
                                         <div class="divider-custom-line"></div>
                                     </div>
-                                    <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/safe.png" alt="Locked Safe"/>
                                     <!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p>
+                                    <p class="pre-wrap lead mb-3">Objective </p>
+                                    <p align="left">
+                                        In this lab, we start to run the car with our own control circuits and algorithm. With our own control system, we can control the exact speed and duration of each motor. This will set a solid foundation for closed-loop control and, more importantly, allow us to replicate the stunts we characterized later. 
+                                        </p>
+                                    <p class="pre-wrap lead mb-3">Wiring </p>
+                                    <p align="left">
+                                        Wiring is a crucial part of the lab. A clean, neat, and secure wiring will allow us to have a smooth testing process and obtain data without much noise. First of all, I took the car apart and cleaned the original circuitry out. There are a few requirements I hope to meet with the placement of all the components:
+                                        </p>
+                                    <p align="left">
+                                        1. All components need to be securely mounted and in a position with enough space.
+                                            </p>
+                                    <p align="left">
+                                         2. IMU should stay away from the DC motors so the accelerometer is less disrupted by the motor EMI noise.</p>
+                                    <p align="left">
+                                            3. Components with a lot of connections to each other should stay close together.</p>     
+                                    <p align="left">Therefore, I decided to place the IMU in the front platform, one TOF in the front and one on the side, two motor drivers in the rear cabin with all the batteries, next to the motors and the Artemis. </p> 
+                                    <p align="left">There are two h-briges on the <code>DRV8833</code> IC. To increase the maximum current we can deliver to each motor, we use one driver per motor by parallelling its two channels. This is a creative solution when we do not have a single h-bridge that can handle the amount of current we would like to deliver. </p> 
+                                    <p align="left">To make debugging hardware easier, I decide to connect different parts of the system securely while making them detachable from each other. Therefore, half of my connection to the boards is soldered and the other half is male/female header connection. Knowing that all GPIO pins on Artemis Nano have PWM capability and saving space, I only put headers between A2-8 pins on the board. </p>
+                                    <p align="left">Placement of components: </p>
+                                    <img class="img-fluid" src="assets/img/lab5placement.png">
+                                    <p align="left">I used soft wires to wire all the components together and color-coded them with standard conventions: red for 3V3, black for GND, etc. To reduce EMI between sensors and actuators, I twisted all wires with high-frequency signals together so that the overall branch has a net current of zero. I further protected the circuit by using zip ties to lessen the stress on the solder joints. I also cut the wires so that they could all fit on the chassis but not be too tight. I used electrical tape to isolate components from shorting each other during the runs and use Gorilla tape to securely mount the sensors on flat platforms on the robot. </p>
+                                    <p align="left">Final layout:
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab5wiring.jpg">
+                                    <p class="pre-wrap lead mb-3">Motor Driver </p>
+                                    <p align="left">When we power a system for the first time, it is usually a good idea to power it with a DC power supply. For this implementation, the power supply is acting as a 1S Lipo battery so I set it to 3.7V (the nominal voltage of a 1S Lipo battery) and turn the current limit to 3A since the motor driver allows up to 1.5A per channel. The battery we will end up using is a 25C 850mAh Lipo battery, which can output up to <code>25C* 0.85Ah = 21.25A</code>. Later we will use two different batteries. One power the Artemis and all the sensors and the other provides power for the DC motors. The first one will probably be drawing current at a milliampere level while the other would go up to more than 5 amps. Since the motor draws a lot of currents and its current draws changes rapidly, it would be a good idea to separate the high power and low power path and their power sources. 
+                                    </p>
+                                    <p align="left">I used PWM to control the output level of the motor driver following this chart:
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab5chart.png">
+                                    <p align="left">Since all GPIO pins on Artemis have PWM channels, we can simply call analogWrite(pin, level) function to output a PWM from 0-255. Here, I demonstrated my ability to control the PWM duty cycle on pin A2 with a loop that steps the PWM from 0 to 255.
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab5code1.png">
+                                    <!-- scope-->  
+                                    <iframe src = "https://www.youtube.com/embed/1uajJRABDew"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">To power one motor, we just need to set one pin connected to the input to LOW and the other to a PWM pulse. For example, <code>analogWrite(A3,0); analogWrite(A2,200); </code>
+                                        In the following demo videos, I demonstrated that the wheels can spin in all directions with proper PWM input from the Artemis. I started with one wheel, then started to control both wheels.                                        
+                                    </p>
+                                     <!-- 1wheel-->  
+                                     <iframe src = "https://www.youtube.com/embed/42XXbOofmow"
+                                     width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                     <!-- 1wheel-->  
+                                     <iframe src = "https://www.youtube.com/embed/lL5KUV5moDY"
+                                     width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                     <!-- 2 wheels-->  
+                                     <iframe src = "https://www.youtube.com/embed/aa7RbZNYHA8"
+                                     width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">I then further characterized the input to these functions, so I know how the PWM will make the car move.
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab5code2.png">
+                                    <p class="pre-wrap lead mb-3">Open Loop Control </p>
+                                    <p align="left">This was what happened, when I ran the car on the floor with the battery plugged in. Although I added a timer to stop the movement after two seconds, it was still too moving too fast and not at a straight line. 
+                                    </p>
+                                    <iframe src = "https://www.youtube.com/embed/Smuuu7fAajw"
+                                     width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">The functions I created in the previous sections were nice, but keep reprogramming the board is quite annoying. Therefore, I made a separate command for each one of them. 
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab5code3.png">
+                                    <p align="left">After connecting to Bluetooth with my computer, I can simply run commend like <code>ble.send_command(CMD.FORWARD, "")</code> 
+                                    and <code>ble.send_command(CMD.CWTURN, "") </code>
+                                        
+                                        To make the car perform certain tasks.                                        
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab5code4.png">
+                                    <p align="left">This command will allow the user to input the PWM level of all the motors to set the speed of the car immediately with this line of code in Python.
+                                       <code>ble.send_command(CMD.SETSPEED, "255") </code> 
+                                        Since it is moving to the left when I commanded it to go straight, I tried adding some calibration factor on the left motor to make it go a bit faster than the right one and found that a factor of 1.1 works the best. <code>analogWrite(A2,motorspeed*1.1);</code>
+                                        In this demo, the remote control car moves fairly straight. The string under the car is 2 meters long.                   
+                                    </p>
+
+
+                                    <!-- straight demo-->  
+                                    <iframe src = "https://www.youtube.com/embed/ANKu8Zj6XOM"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+
+                                    <p align="left">With the SETSPEED commend, we can also easily find the minimal PWM duty cycle to make the car move. When the battery is at 4V, the car moves when the PWM level is 49 (which means a duty cycle of <code>49/255 = 19.2%</code>). This video shows the difference between the car moving forward at 19.2% duty cycle and 18.2% duty cycle. When I ran it with a speed of 48, the car could no longer move forward smoothly.</p>
+                                    <iframe src = "https://www.youtube.com/embed/WEBsITOBh4k"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+
+                                    
+                                    <p align="left">For the final demo, I showed the car moving with these command sequences over Bluetooth. Turning requires the motor to spin harder so I set the speed to 255 before calling the turning commands. Overall, the robot could received and performed the commands accurately.      
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab5com.png">
+                                    <!-- final demo-->    
+                                    <iframe src = "https://www.youtube.com/embed/QKOxmwcW91o"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
