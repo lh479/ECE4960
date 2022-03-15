@@ -99,7 +99,7 @@
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal5">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Submarine"/>
+                            </div><img class="img-fluid" src="assets/img/Lab6.png" alt="Lab6"/>
                         </div>
                     </div>
                 </div>
@@ -534,16 +534,81 @@
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
                                     <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary mb-0">Submarine</h2>
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab 6: Closed-loop control </h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
                                         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
                                         <div class="divider-custom-line"></div>
                                     </div>
-                                    <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5" src="assets/img/portfolio/submarine.png" alt="Submarine"/>
+                                    
                                     <!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p>
+                                    <p class="pre-wrap lead mb-3">Objective </p>
+                                    <p align="left">
+                                        After we performed open-loop control in the previous lab, we are moving forward to closed-loop control. Closed-loop control, especially PID control, is a simple and elegant way to accurately control the robot. This lab allows us to set up the basis for impressive stunts later. We can practice implementing PID control from scratch and implementing it on the physical robot. Doing so is more challenging than tuning PID with equations in a simulator, but it encourages thinking about elements such as noise and sampling speed in a real-life scenario. I choose to implement task B for this lab. 
+                                        </p>
+                                    <p class="pre-wrap lead mb-3">Debugging Framework </p>
+                                    <p align="left">
+                                        First and foremost, we need to set up a user-friendly debugging environment so that we can implement a PID controller more efficiently later. I first allocated memory for a few 500-element arrays. Based on the sample speed of the IMU, 500 data points will take about 5 seconds to be filled, which should be long enough to perform the task. I created the following arrays for debugging or tuning PID. 
+                                        </p>
+                                    <p align="left">
+                                        To send them over in a clean and speedy manner, I decided to make a <code>SENDDATA</code> commend, in which I made a for loop with 500 interactions. In each iteration, I cleared the <code>tx_estring_value</code> and appended all the debugging data on it. Therefore, all the data can be associated with the correct timestamp. 
+                                            </p>
+                                            <img class="img-fluid" src="assets/img/Lab6:1.png">
+                                    <p align="left">
+                                        On the Python side, I declared a list “readings”  to store all the strings. I called the start_notify function to monitor any changes in the <code>RX_STRING</code>. In the handler, I appended the transferred strings to the list. Once the handler was established, I called the <code>SENDDATA</code> commend. Usually, after about 20 seconds, all the data are transferred and I used a for loop to print out the readings: </p>
+                                        <p align="left"><code>for f in readings:</code></p>
+                                        <p align="left"><code>print(f)</code> </p>
+                                        <p align="left">The readings are printed out in one row per timestamp format with commas separating different data. I can copy the data and plot them in Google Sheet.
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab6:2.png">
+                                    <p align="left">
+                                        To reduce the number of compilations I need to do, I created two helper commends <code>SETPIDVALUE</code> and <code>SETSETPOINT</code>. I call them in the Python code so I can tune my PID values and change the setpoint quickly. 
+                                        <code>ble.send_command(CMD.SETPIDVALUE, "4|0|0.5")</code>
+                                        <code>ble.send_command(CMD.SETSETPOINT, "0")</code>
+                                    </p>
+                                    <p align="left">
+                                        On the Arduino side, I used the function from the ble library to update global variables such as Kp, Ki, Kd, and setPoint. For example, to update the Kp value from user input, I used <code>success = robot_cmd.get_next_value(Kp);</code></p>
+                                        <p align="left">Since I used Bluetooth to send commends in lab4 and lab5, I was able to reuse a lot of my functions such as <code>forward(), backward(), CW(), CCW(),</code> and <code>brake().</code> I also demonstrated my deployment of the IMU functionality onto the Bluetooth code in the Testing Methods section of my lab4 writeup.</p>
+                                        <p align="left">After implementing all the debugging and helper functions, I am ready to move forward to implement PID control.
+                                    </p>
+                                    <p class="pre-wrap lead mb-3">PID Logic </p>
+                                    <p align="left">A PID controller continuously calculates an error value as the difference between the desired setpoint and a measured process variable (output), and it applies a correction based on proportional (P), integral (I), and derivative (D) terms. The objective of this PID controller is to make the robot turn facing a certain direction. The key to implementing a PID controller is knowing what the setpoint, input, output, and error are. More importantly, knowing their units. In this case, the setpoint is the target angle, input is the yaw in degree calculated from the gyroscope z-axis data, the error is the difference between the current yaw and the setpoint, and the output is a number generated by the three PID terms. The P term is the product between a constant Kp and the error. The I term is the product of Ki and accumulated error. The D term is the product between Kd and the change of error. The unit of the output does not really matter. In this case, I use the sign of the output to decide if I should make the robot turn clockwise or counterclockwise, and the magnitude to control the motor speed. To make sure motor speed is in a reasonable range, I used a combination of min and max function to ensure its value. <code>motorspeed = min (230, max(150, output)); </code>
+                                    </p>
+                                    <p class="pre-wrap lead mb-3">PID Implementation and Tuning </p>
+                                    <p align="left">Before tuning the controller, let me briefly summarize the significance of Kp, Ki, and Kd. The bigger Kp is, the harder the controller pushes. The smaller Ki is, the quicker the controller reacts to load changes, but the greater risk of oscillations. The bigger Kd is, the more the controller dampens oscillations. 
+                                    </p>
+                                    <p align="left">I implemented a controller with only the proportional term first. The value of Kp is arbitrary, but we can approximate the order of magnitude by considering that our output will become the input of analogWrite (0-255) and our error is (0-180) if we want the robot to turn backward. Therefore, I started with Kp equaled 1. 
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/Lab6C1.png">
+                                    <p align="left">I plotted the angle vs time, and I could see that system reached the setpoint correctly but it was a bit slow. Therefore, I kept increasing the Kp value. I observed overshoot when I set it to 3. </p>
+                                    <img class="img-fluid" src="assets/img/Lab6C2.png">
+                                    <p align="left">To suppress the overshoot while increasing the speed, even more, I increased the Kp to 4 and introduced a differential term. A big differential term slowed down the system, so I kept it small. As you can see, the overshoot is suppressed. </p>
+
+                                    <img class="img-fluid" src="assets/img/Lab6C3.png">
+                                    <p align="left">Since the robot turned fast and accurately with PD controls, my final implementation only include those two terms. 
+                                    </p><img class="img-fluid" src="assets/img/Lab6:4.png">
+                                    <p align="left">A worth noting debugging detail is that my gyroscope data was inaccurate at first. I then realized that the raw gyroscope data were maxed out. The gyroscope has an advanced setting that we can address, the data collection rate. I increased in from the default 250 data per second to 1000 with myFSS.g = dps1000;                                    </p>
+                                    <p class="pre-wrap lead mb-3">Drifting Implementation </p>
+                                    <p align="left">With effective closed-loop turning, all we need to do right now is to modify it so that it can move forward before and after. I set the initial setpoint to be 0, and change the setpoint in the middle of the run. I then ensured the robot moved forward when it is facing the setpoint direction by adding the if statement: <code>if (abs(error) < 2) { forward();}</code>
+                                    And adding the pid turning code in the else statement.
+                                    </p>
+                                    <p class="pre-wrap lead mb-3">Demo</p>
+                                    <p align="left">Here is the demo video for drifting. The robot traveled straight, turned exactly 180 degrees, and then traveled straight back. It performed the entire task at a relatively high speed.</p>
+                                    <iframe src = "https://www.youtube.com/embed/o0zs07wxH40"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">Below are the data collected during this demo run.</p>
+                                    <img class="img-fluid" src="assets/img/lab6C4.png">
+                                    <img class="img-fluid" src="assets/img/lab6c5.png">
+                                    <img class="img-fluid" src="assets/img/lab6c6.png">
+                                    <iframe src = "https://www.youtube.com/embed/Z8X0P8SSXpY"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <iframe src = "https://www.youtube.com/embed/OfjwZr5vnvs"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">Below are the data collected during this demo run.</p>
+                                    <img class="img-fluid" src="assets/img/lab6c7.png">
+                                    <img class="img-fluid" src="assets/img/lab6c8.png">
+                                    <img class="img-fluid" src="assets/img/lab6c9.png">
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
