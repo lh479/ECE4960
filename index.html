@@ -102,6 +102,48 @@
                             </div><img class="img-fluid" src="assets/img/Lab6.png" alt="Lab6"/>
                         </div>
                     </div>
+                    <div class="col-md-6 col-lg-4 mb-5">
+                        <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal6">
+                            <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                                <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab7"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-5">
+                        <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal7">
+                            <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                                <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab8"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-5">
+                        <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal8">
+                            <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                                <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab9"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-5">
+                        <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal9">
+                            <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                                <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab9"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-5">
+                        <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal10">
+                            <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                                <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab9"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-5">
+                        <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal11">
+                            <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                                <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab9"/>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -608,6 +650,271 @@
                                     <img class="img-fluid" src="assets/img/lab6c7.png">
                                     <img class="img-fluid" src="assets/img/lab6c8.png">
                                     <img class="img-fluid" src="assets/img/lab6c9.png">
+                                    <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="portfolio-modal modal fade" id="portfolioModal6" tabindex="-1" role="dialog" aria-labelledby="#portfolioModal6Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
+                    <div class="modal-body text-center">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <!-- Portfolio Modal - Title-->
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab 7: Kalman Filter</h2>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <p class="pre-wrap lead mb-3">Objective </p>
+                                    <p align="left">
+                                        Kalman filtering is an algorithm that incorporates uncertainty to obtain a better estimate based on inputs and observations. The purpose of this lab is to implement a Kalman filter so that we can quickly predict the distance of the robot from the wall. In task B, the robot needs to turn quickly when it gets too close to the wall. With the ToF sensor, we are able to measure the distance of the robot to the wall, yet the sensor is too slow for the fast robot. Therefore, we need to employ a Kalman filter to estimate the distance to the wall frequently.
+                                    </p>
+                                    
+                                    <p class="pre-wrap lead mb-3">Step Response </p>
+                                    <p align="left">
+                                            In order to obtain the state space equation of the robot, we need to first execute a step response. Similar to the previous lab, I implemented commends so that I can control the robot over Bluetooth. 
+                                            </p>    
+                                    <img class="img-fluid" src="assets/img/Lab7:1.png">
+                                    <p align="left">
+                                        In the <code>STEPRESPONSE</code> command, I drove the robot against the wall at maximal speed and made it hard-break when it gets too close. Since I am driving the robot at a very high speed, I account for the braking distance before the robot hits the wall. I stored the testing data in the TOFdata array and send it over after the run using Bluetooth.
+                                        </p> 
+                                        <img class="img-fluid" src="assets/img/lab7:2.png">
+                                        <img class="img-fluid" src="assets/img/lab7:3.png">
+                                        <p align="left">
+                                            I plotted the data collected during the run. In order to find the steady-state speed and the 90% rise time, I plotted the speed versus time curve, which is the derivative of distance versus time curve in Matlab. 
+                                        </p> 
+                                     <img class="img-fluid" src="assets/img/lab7:4.png">
+                                     <p align="left">
+                                        <code>F = ma = mx”
+                                        </code>
+                                    </p> 
+                                    <p align="left">
+                                        <code>F = u - dx’
+                                        </code>
+                                    </p> 
+                                    <p align="left">
+                                        <code>x” = u/m - dx’/m
+                                        </code>
+                                    </p> 
+                                    <p align="left">
+                                        The space equations are:
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab7eq.png">
+                                    <img class="img-fluid" src="assets/img/lab7eq2.png">
+                                    <p align="left">
+                                        To find drag(d), we use the steady-state speed. From the plots, the speed is about 3200. 
+                                            <code>d = u/ x’ = 1/3200</code>
+                                    </p> 
+                                    <p align="left">
+                                        To find the momentum(m), we use the 90% rise time of the speed. 
+                                            <code>M = - d * t_r / np.log(0.1)
+                                            </code>
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/Lab7code1.png">
+                                    <p align="left">
+                                        Then I used d and m terms to find the A and B matrices.I also found delta T by averaging the sampling times. The next step is to discretize the A and B matrics. 
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab7code2.png">
+                                    <p align="left">
+                                        Code snippets: 
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab7code3.png">
+                                    <p align="left">
+                                        Here, I am using the process noise and sensor noise covariances as the lecture slide suggested. Their values determine the behavior of the Kalman filter. The Kalman Filter will give more trust to the measurement when the process noise is large. On the other hand, when the sensor noise is large, the KF has more confidence in the prediction. I will tune the noise covariance matrices as I run the KF with data.
+                                    </p> 
+                                    <p align="left">
+                                        I used the code from the lab handout for KF implementation. There are two stages in the Kalman Filter implementation: prediction and update. Prediction calculates mu_bar and signma_bar. In the update stage, we calculate the Kalman gain with sigma_bar and the noise. Then, use that to update the mu and sigma. 
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab7code4.png">
+                                    <p class="pre-wrap lead mb-3">Kalman Filter Sanity Check </p>
+                                    <p align="left">
+                                        Before implementing the KF on the Artemis, we need to run the KF on the previous data we collected to perform a sanity check. The initial value is <code>[Initial TOF val 0]</code>. To iterate all the datapoint, I looped through all timestamps and call the KF function at each iteration.
+                                    </p> 
+                                    <p align="left">
+                                        By changing different noise values, the predicted values conform with measured values differently. When sigma_u is large the uncertainty of the model is high. This means we trust the sensor much more than our model and the curve, as you can see, follows the sensor values including the noisy part closely.
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab7g1.png">
+                                    <p align="left">
+                                        When I decreased sigma_u and increased the sensor noise, sigma_z, the predicted curve still follows the measured points in a much more lenient way. It is trusting the model more now. 
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab7g2.png">
+                                    <p class="pre-wrap lead mb-3">Kalman Filter on Robot</p>
+                                    <p align="left">
+                                        Implementing what we achieved in Python is merely a process of rewriting the program in a different language and then integrating it into the original code.
+
+                                    </p>
+                                    <p align="left">
+                                        The first step is to include the library we need, so we can perform matrices computations in Arduino IDE.
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab7code11.png">
+                                    <p align="left">
+                                        Then we declare the calculated d and m constants and use them to declare the A, B, and C matrices. We also declare the process and measurement noise contained in sig_u and sig_z matrices.
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab7code12.png">
+                                    <p align="left">
+                                        Similar to the Python code, I discretize matrices A and B.
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab7code13.png">
+                                    <p align="left">
+                                        Lastly, I declare the initial states. 
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab7code14.png">
+                                    <p align="left">
+                                        We need need to call this function when we obtained new data from the TOF sensor and use the <code>x_val</code> calculated from the model instead of the sensor reading as the real distance of the robot to the wall. After a few small tunings and debugging of the car, the robot can stop more rapidly compared to before using KF.
+ 
+                                    </p>
+                                    <p align="left">
+                                       Demo Video:
+                                    </p>
+                                    <iframe src = "https://www.youtube.com/embed/oWBN20DKT1c"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">
+                                        As you can see, the car now can stop before it craches into the wall.
+                                     </p>
+                                    <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="portfolio-modal modal fade" id="portfolioModal7" tabindex="-1" role="dialog" aria-labelledby="#portfolioModal7Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
+                    <div class="modal-body text-center">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-7">
+                                    <!-- Portfolio Modal - Title-->
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab8: Stunts</h2>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <p class="pre-wrap lead mb-3">Objective </p>
+                                    <p align="left">
+                                        This lab is a summary and demo of the previous two labs. It is the moment when we make things that work separately to work together and perform the cool stunts. A lot of components can contribute to a successful final demo, including timing, floor and wheel condition, and code efficiency. We are also encouraged to use our imagination and what we have tried for fun in the previous lab to perform an open-loop stunt.
+                                    </p>
+                                    <p class="pre-wrap lead mb-3">Controlled Stunts: Task B: Drift Much?
+                                    </p>
+                                    <p align="left">
+                                        Since I selected task B in the previous lab, my robot needs to start from more than 4 meters away, drive straight, cross a line 0.6m from the wall, drift for 180 degrees, and then run back fast. Since I already implemented drifting and TOF distance sensing from the wall with Kalman Filter in the previous two labs, I just need to combine the two parts. In Lab 6, my robot drifts 180 degrees when the data string is half full. Now, I just need to change that condition to be: when the robot is closer than 0.6m to the wall, we change the setpoint from 0 to 180 and the robot will spin to position itself to the correct angular position. When the error between the current pose and the setpoint is too small, the robot will just move straight as before. For the detailed implementation of the PID or KF, see previous labs. 
+                                            </p>  
+                                    <p align="left">
+                                        Here is a full demo video:
+                                    </p> 
+                                    <iframe src = "https://www.youtube.com/embed/TDBU-BpFCZk"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="portfolio-modal modal fade" id="portfolioModal8" tabindex="-1" role="dialog" aria-labelledby="#portfolioModal8Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
+                    <div class="modal-body text-center">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <!-- Portfolio Modal - Title-->
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab9: Mapping (real)</h2>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+
+                                    <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="portfolio-modal modal fade" id="portfolioModal9" tabindex="-1" role="dialog" aria-labelledby="#portfolioModal9Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
+                    <div class="modal-body text-center">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <!-- Portfolio Modal - Title-->
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab 10: Simulator</h2>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+
+                                    <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="portfolio-modal modal fade" id="portfolioModal10" tabindex="-1" role="dialog" aria-labelledby="#portfolioModal10Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
+                    <div class="modal-body text-center">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <!-- Portfolio Modal - Title-->
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab 11: Localization (sim)</h2>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="portfolio-modal modal fade" id="portfolioModal11" tabindex="-1" role="dialog" aria-labelledby="#portfolioModal11Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fas fa-times"></i></span></button>
+                    <div class="modal-body text-center">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <!-- Portfolio Modal - Title-->
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab 12: Localization (real)</h2>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
