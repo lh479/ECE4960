@@ -120,21 +120,21 @@
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal8">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab9"/>
+                            </div><img class="img-fluid" src="assets/img/Lab9.png" alt="Lab9"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal9">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab9"/>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab10"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal10">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab9"/>
+                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab11"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
@@ -822,7 +822,7 @@
                                     </p>
                                     <p align="left">
                                         I repeated the stunt I performed in Lab5: Bi-Pedal Motion. This interesting motion of the car happens when the car is sideway. When we oscillate between the two turning directions quickly, the car will achieve fish-like locomotion. Based on the plots I plotted for lab5 (see below), when the interval is larger than 3.5 seconds, or 350 milliseconds, the car can reliably perform the locomotion. 
-                                            </p>  
+                                    </p>  
                                     <img class="img-fluid" src="assets/img/Lab4:9.png">
                                     <p align="left">
                                         Therefore, in the code, I simply oscillated between the forward and backward function with a 350ms interval.
@@ -844,6 +844,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         <div class="portfolio-modal modal fade" id="portfolioModal8" tabindex="-1" role="dialog" aria-labelledby="#portfolioModal8Label" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
@@ -852,15 +853,103 @@
                         <div class="container">
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
-                                    <!-- Portfolio Modal - Title-->
+                                    
                                     <h2 class="portfolio-modal-title text-secondary mb-0">Lab9: Mapping (real)</h2>
-                                    <!-- Icon Divider-->
+                                    
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
                                         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
                                         <div class="divider-custom-line"></div>
                                     </div>
+                                    <p class="pre-wrap lead mb-3">Objective </p>
+                                    <p align="left">
+                                        Mapping is a very important skill in robotics. For example, a smart vacuum robot usually first acquires the map of the entire room before motion planning. In this lab, we are employing our robot and the TOF sensor on it to create a map for the static map in the front room of the lab. To build the map, we can need to first make the robot spin in place while collecting data and then, with the help of the transformation matrix, convert the data collected in the robotics frame into the global frame.
 
+                                    </p>  
+                                    <p class="pre-wrap lead mb-3">Spinning In Place </p>
+                                    <p align="left">
+                                        Since I already completed task B in lab 6, I am using a PD controller to closed-loop control the robot to spin exactly a small degree every time it turns. The implementation of the controller is covered in lab6: 
+
+                                    </p>  
+                                    <img class="img-fluid" src="assets/img/lab9:1.png">
+                                    <p align="left">
+                                        The accuracy of the system is already tested in the previous lab. Under a high-speed camera, you can see that the robot can turn accurately 180 degrees, as I instructed it to.  
+                                    </p>  
+                                    <iframe src = "https://www.youtube.com/embed/o0zs07wxH40"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">
+                                        Here is a graph demonstrating the robot’s pose when the setpoint is 180 degrees.
+                                    </p>  
+                                    <img class="img-fluid" src="assets/img/lab9:2.png">
+                                    <p align="left">
+                                        Since in this lab, the robot is turning slower, I decreased the degree per second setting to increase the accuracy of the system. In order to collect enough data for each turn, I am making the robot turn 10 degrees steps and make 36 steps every time the function is called. Therefore, I can visually inspect the quality of the run. The reason why I choose this step size is that the robot is able to fully ramp up its speed to make an accurate turn. Here is a video of it turning on-axis in the lab. 
+                                    </p>  
+                                    <p align="left">
+                                        Since in this lab, the robot is turning slower, I decreased the degree per second setting to increase the accuracy of the system. In order to collect enough data for each turn, I am making the robot turn 10 degrees steps and make 36 steps every time the function is called. Therefore, I can visually inspect the quality of the run. The reason why I choose this step size is that the robot is able to fully ramp up its speed to make an accurate turn. Here is a video of it turning on-axis in the lab. 
+                                    </p>  
+                                    <iframe src = "https://www.youtube.com/embed/MGHJvnm0b5Y"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">
+                                        Since in this lab, the robot is turning slower, I decreased the degree per second setting to increase the accuracy of the system. In order to collect enough data for each turn, I am making the robot turn 10 degrees steps and make 36 steps every time the function is called. Therefore, I can visually inspect the quality of the run. The reason why I choose this step size is that the robot is able to fully ramp up its speed to make an accurate turn. Here is a video of it turning on-axis in the lab. 
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab9:3.png">
+                                    <p align="left">
+                                        Using my method of turning, the robot can plot out the orange dots as the map after changing the coordinates of its data points in the middle of a 4x4m square empty room. With a single turn, the resolution is not very high, but one can still have a preliminary understanding of the space. By inspecting if the robot stopped at its starting point, we can ensure the quality of the turn and thus eliminate the majority of the noise in yaw reading. Therefore, the noise of the mapping data is the TOF sensor reading noise, which can be estimated as a gaussian distribution with a mean of 0. 
+
+                                    </p> 
+                                    <p class="pre-wrap lead mb-3">Readout Distances</p>
+                                    <p align="left">
+                                        The reading distance process is the same as in the previous labs. We start ranging, wait until data is available, and store the read value into a variable, then stop ranging.
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab9:5.png">
+                                    <p class="pre-wrap lead mb-3">Mapping Function</p>
+                                    <p align="left">
+                                        I implemented all mapping-related steps into the mapping commend. It takes the user input from the Bluetooth command for the number of data the robot collects. 
+
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab9:4.png">
+                                    <p align="left">
+                                        And then, I declared all the variables. Then, I am calculating the KP and KD values after a new yaw value is ready. When the error is small enough (less than 0.2 degrees),  the robot brakes, toggles the led on Artemis, and collects a TOF reading. When a reading is obtained, I increment the setpoint by 10 degrees until enough data point is collected. If the error is not small enough, the robot will turn to try to reach the setpoint. 
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab9:6.png">
+                                    <p align="left">
+                                        The command on the Python side is <code>ble.send_command(CMD.MAP, “36”)</code>. The data are sent back the same way as before, in strings.
+                                    </p> 
+                                    <p align="left">
+                                        After I called the command to run the robot on the map, I sanity-checked each of my runs by plotting the data collected in polar plots in Matlab. 
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab9:p1.png">
+                                    <img class="img-fluid" src="assets/img/lab9:p2.png">
+                                    <p align="left">
+                                        For each point in the map, I collected data with the initial pose of 0 degrees and -45 degrees. This not only provides a more unique data point for that specific location but also helps us to check if the two runs provide us with a similar map. As you can see, for the (0,3) point, the two sanity checkpoint are similar to each other and with a 45-degree difference as expected.
+                                    </p> 
+                                    <p class="pre-wrap lead mb-3">Merge and Plot your Readings</p>
+
+                                    <p align="left">
+                                        I first implemented this robot2global function to perform the change of coordinate in Matlab. It takes in the robot’s current pose, a point in the robot coordinate, and then outputs the x,y coordinates of that point in the global frame. It basically uses the transformation matrix to perform the conversion.
+
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab9f1.png">
+                                    <img class="img-fluid" src="assets/img/lab9c1.png">
+                                    <p align="left">
+                                        For each data, I use the function I implemented to calculate its coordinates in the global frame. This diagram will illustrate the conversion process. 
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab9dia.png">
+                                    <p align="left">
+                                        Here are the implementations for points at (0,3) with an initial pose of 0 degrees to y-axis ( 90’ from x) and an initial pose of -45 degrees to y-axis (135’ from x).
+                                    </p> 
+                                    <p align="left">
+                                        I collected 36 data points for each initial pose at each data collection point. Therefore, I collected a total of 8 times 36 = 288 data points. After I converted all the data points to the global frame, one can clearly see the contour of the map.
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab9c2.png">
+                                    <p align="left">
+                                        Here are the implementations for points at (0,3) with an initial pose of 0 degrees to y-axis ( 90’ from x) and an initial pose of -45 degrees to y-axis (135’ from x).
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab9m1.png">
+                                    <p align="left">
+                                        I collected 36 data points for each initial pose at each data collection point. Therefore, I collected a total of 8 times 36 = 288 data points. After I converted all the data points to the global frame, one can clearly see the contour of the map.
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab9m2.png">
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
@@ -869,6 +958,7 @@
                 </div>
             </div>
         </div>
+        
         <div class="portfolio-modal modal fade" id="portfolioModal9" tabindex="-1" role="dialog" aria-labelledby="#portfolioModal9Label" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
@@ -942,6 +1032,7 @@
                 </div>
             </div>
         </div>
+        
         <section class="page-section bg-primary text-white mb-0" id="about">
             <div class="container">
                 <!-- About Section Heading-->
