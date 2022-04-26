@@ -127,14 +127,14 @@
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal9">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab10"/>
+                            </div><img class="img-fluid" src="assets/img/Lab10.png" alt="Lab10"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal10">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab11"/>
+                            </div><img class="img-fluid" src="assets/img/Lab11.png" alt="Lab11"/>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4 mb-5">
@@ -975,7 +975,76 @@
                                         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
                                         <div class="divider-custom-line"></div>
                                     </div>
-
+                                    
+                                    <p class="pre-wrap lead mb-3">Objective</p>
+                                    <p align="left">
+                                        This lab is getting us ready for the future lab by instructing us to set up the simulation environment, have fun simple tasks to guide us to engage with the virtual robot, and employ the live plotting tool.
+                                    </p> 
+                                    <p class="pre-wrap lead mb-3">Setup</p>
+                                    <p align="left">
+                                        First, we need to update our Python to Python 3.10 and pip to at least 21.0. Pip did not work in the virtual environment so I decided to download Box2D and wheels to my own directory. I also need to deal with a bunch of dependencies issues through a lot of Google searchings. In the end, I successfully installed it from source. With the lab10 code base, I am able to see the simulation environment and maneuver the virtual robot with my keyboard. 
+                                    </p>
+                                    <p class="pre-wrap lead mb-3">Simulator and Its Functionality
+                                    </p>
+                                    <p align="left">
+                                        The simulator is a great tool for us to preimplement algorithms before directly putting it on the robot. The real world has so many sources of noise that it would be challenging to implement algorithms without experimenting in an ideal environment. There are two options to start, stop, or restart the simulator and the plotter. The first one it to use the GUI. After calling “<code>gui.show()</code>”, the GUI will show up. 
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab10p1.png">
+                                    <p align="left">
+                                        The second option is to start the simulator and plotter programmatically, and we can reset and quit them in a similar manner.
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab10p2.png">
+                                    <p align="left">
+                                        To interact with the GUI, we can use our mouse and keyboard. Pressing ‘h’ will show this complete list of commands for controlling the GUI. 
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab10p3.png">
+                                    <p align="left">
+                                        The plotter is more direct. We can simply use our mouse to zoom in and out, and press the “A” button to autofit the plot to our window. 
+ 
+                                    </p>
+                                    <p align="left">
+                                        We can also interact with the simulator and the plotter through program to control the robot more precisely and plot specific information on the plotter. The commander class has a list of useful functions that we can call. For example, “<code>cmdr.plot_odom(x,y)</code>” will plot a point in the simulator in red. We use this function to plot odometry data. 
+                                    </p>
+                                    <p class="pre-wrap lead mb-3">Open Loop Control</p>
+                                    <p align="left">
+                                        To make the robot go in a square open loop, we just need to make the robot to go straight for a certain distance, turn 90 degrees, then go straight for the same distance, and repeat this sequence. I implemented three helper functions. First, a plotting function that plot the ground truth and odometry pose. Then, the <code>straight()</code> funciton that set velocity of the robot and call a non-blocking delay for 1 second: <code>await.asyncio.sleep(1)</code>. The <code>turn()</code> function is the hardest to implement open loop. Without feedback, I can only keep trying until I get the perfect combo for turning 90 degrees: an angular speed of 1 with 1.5 second duration. 
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab10p5.png">
+                                    <p align="left">
+                                        The next step is then run all three functions together in a loop.
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab10p6.png">
+                                    <p align="left">
+                                        The open loop simulation is shown in the video. As you can see, the odometry is not a reliable indication for the location of the robot. Therefore, we will later use Bayes filter to perform localization. Since there is no feedback, any noise or error will accumulate. You can see the robot does not run through the same path every time. The execution is not the same shape. 
+                                    </p>
+                                    <iframe src = "https://www.youtube.com/embed/yacUo6LzZHE"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p class="pre-wrap lead mb-3">Open Loop Control</p>
+                                    <p align="left">
+                                        Closed loop control means controlling the robot with the help of sensor input. I made the robot turn about 100 degrees whenever the sensor reads less than 0.5 meter. Otherwise, it will travel straight. There are three factors that determine if the robot can successfully detect the wall in front of it: the threshold turning distance, the velocity of the robot, and the duration of each straight function. If we want the robot to always turn successfully we would want it to travel slowly with a larger turning threshold and make each function shorter to increase sample rate. To make the comparison more direct and clear, I will keep the start turning distance at 0.5m. 
+                                    </p>
+                                    <p align="left">
+                                        In this video, the robot is running straight at 0.5m/s speed and the <code>straight()</code> function has a 1 second delay in it. As you can see, the robot can barely prevent itself from crashing into walls. 
+                                    </p>
+                                    <iframe src = "https://www.youtube.com/embed/ACK1OfVGO7Y"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">
+                                        In the next video, I slowed down the robot to 0.3m/s. It can stop and turn much more accurately than before. However, this system runs very slowly. We need to speed it up since this course is called Fast Robots. 
+                                    </p>
+                                    <iframe src = "https://www.youtube.com/embed/drDoeupKwGE"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">
+                                        In this video, I increased the speed to 10 times of before, 3m/s. At the same time, I shorten the duration of the function to travel straight from 1 second to 0.001 second. Even though the robot runs very fast, but it always stops itself before crashing into the wall. 
+                                    </p>
+                                    <iframe src = "https://www.youtube.com/embed/qmR4gH0mpAE"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">
+                                        When the sample rate of the sensor is high enough — the time frame between each sensor reading is checked times the speed need to be small then the breaking distance — the robot avoids hitting the wall reliably. Except for one case: when there is a path like this one
+                                    </p>
+                                    <img class="img-fluid" src="assets/img/lab10p7.png">
+                                    <p align="left">
+                                        Since the distance sensor does not account for the width of the robot, when the robot moves straight, it will crash into the corner of the wall. A way to avoid this is to have the robot move carefully and turn at small angles on both sides after moving a short distance. 
+                                    </p>
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
@@ -1000,6 +1069,87 @@
                                         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
                                         <div class="divider-custom-line"></div>
                                     </div>
+                                    <p class="pre-wrap lead mb-3">Objective </p>
+                                    <p align="left">
+                                        The purpose of this lab is to implement grid localization using the Bayes filter. Bayes filter is a general probabilistic approach for estimating an unknown probability density function recursively over time using incoming measurements and a mathematical process model. In our case, with odometry data and distance sensor data, we are able to approximate the localization of the robot.
+
+                                    </p>  
+                                    <p class="pre-wrap lead mb-3">Overview</p>
+                                    <p align="left">
+                                        The input of the Bayes Filter Algorithm is an array of belief, u_t, and z_t. The array of beliefs, in the context of this lab, is a 3-D array that stores the probability of the robot pose at a certain instance of X, Y, and angle. U_t is the control of the robot and Z_t is the array of the sensor values. There are two steps of a Bayes filter algorithm, the prediction step, and the update step. The later sections will focus on their detailed implementation. At the end of the algorithm, one should achieve a better estimate of the pose and location of the robot.
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab11g1.png">
+                                    <p class="pre-wrap lead mb-3">Compute_Control</p>
+                                    <p align="left">
+                                        First, I implemented the computer_control helper function. This function extracts the control information based on the odometry motion model with the current and previous odometry poses. In short, I used the three equations covered in the slides to implement this function.
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab11g2.png">
+                                    <p align="left">
+                                        The python implementation is:
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab11g3.png">
+                                    <p align="left">
+                                        Since we need to limit the output rot angles to be between -180 to 180 degrees, we use mapper.normalize_angle to normalize the angle before we output them. To ensure the correctness of my implementation, I wrote simple unit tests such as this
+
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab11g4.png">
+                                    <p align="left">
+                                        TAs you can see, if a robot starts from point (0,0) while facing 0 degrees. It makes sense to turn 45 degrees, travel root 2 meters, and then turn -45 degrees.
+                                    </p> 
+                                    <p class="pre-wrap lead mb-3">Odom_motion_model
+                                    </p>
+                                    <p align="left">
+                                        This function takes three inputs: <code>cur_pose</code>, <code> prev_pose</code>, and <code>u</code>. It outputs the probability of traveling from one pose to another with the given control. I first calculated the <code>actual_u</code> by calling <code>compute_control(cur_pose, prev_pose)</code>. Then, I used three Gaussian functions with the actual control as means and noise as sigma. In this way, I found the probability. 
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab11g5.png">
+                                    <p align="left">
+                                        I can also unit test this helper function:
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab11g6.png">
+                                    <p align="left">
+                                        I inputted two poses and a u that is similar to the actual control and I got a high probability of 0.982, which is what I am expecting. 
+                                    </p> 
+                                    <p class="pre-wrap lead mb-3">Prediction_step</p>
+                                    <p align="left">
+                                        Now, it is time to implement one of the two main steps of a Bayes filter. In this step, we update the probabilities in loc.bel_bar based on the previous loc.bel and the odometry motion model. Loc.bel_bar is an intermediate variable that is the output of the prediction step and we will use it in the update step very soon. Even though it is a global variable, we need to initialize it every time we call this function because it does not accumulate the previous bel_bar value. Before we entered the nested loops, we first computer u with the odometry data and initialize bel_bar. 
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab11g7.png">
+                                    <p align="left">
+                                        In the prediction step, we would like to calculate a new belief, bel_bar, given the previous belief and the odometry. On the first free outer loop, I looped through the X, Y, A of the previous belief. To speed up the code, I made a threshold value of 0.0001. I would only keep studying the possibility with this previous pose if the previous probability at the given XYA is higher than the threshold value. The uniform belief value was <code>1/(12*9*18) = 0.00051440</code>. Therefore, I picked the threshold to be the same order of magnitude. In the inner loops, I loop through all the possible X, Y, A values. For each one of them, I updated the bel_bar value with the odom_motion_model times previous bel. 
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab11g8.png">
+                                    <p align="left">
+                                        In the end, I normalized bel_bar to a sum of one. <code>loc.bel_bar = loc.bel_bar / np.sum(loc.bel_bar)</code>
+                                    </p> 
+                                    <p align="left">
+                                        To test the prediction step, I can’t really make a unit test for it. When I am running it on the simulator, I initialized the probability distribution with a point mass distribution and can vaguely check if the number makes sense in the first two loops. This was the hardest part of debugging since there is no direct way to verify the correctness of the implementation. However, by unit testing the previous two helper functions, we are in a good place.
+                                    </p> 
+                                    <p class="pre-wrap lead mb-3">Update_step
+                                    </p>
+                                    <p align="left">
+                                        Lastly, in the update step, I updated the probabilities in loc.bel based on loc.bel_bar and the sensor model. At first, I tried to use matrix multiplication, but it was hard to debug and wrap my head around. Therefore, I used three nested loops to loop through X, Y, A in their respective range. For each initial pose, I looped through the 18 sensor measurements and used a gaussian with previous stored observations data at the pose as mean and sensor noise as sigma to find the probability of the robot at the pose with that sensor measurement. I used a “*=” operator to cascade the probability at the 18 independent sensor readings. 
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab11g9.png">
+                                    <p align="left">
+                                        After we update the p (initialized to be 1 at each XYA), I update the bel value: <code>loc.bel[x][y][a] = loc.bel_bar[x][y][a] * p</code>.
+                                        Similar to the prediction_step, I also normalize loc.bel before outputting it: <code>loc.bel = loc.bel / np.sum(loc.bel)</code>.                                         
+                                    </p> 
+                                    <p class="pre-wrap lead mb-3">Final Demo
+                                    </p>
+                                    <p align="left">
+                                        After some intense and frustrating debugging, my final trajectory looks like this. Green is the ground truth. Red is the integrated odometry path. As you can see, it is pretty bad and that’s why we need Bayes filter. The blue line is the path from the center of the grid with the highest belief at each step. Since there is noise in the sensor measurement and the number of grids was not high enough, the path does not completely align with the ground truth path.                                
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab11p10.png">
+                                    <p align="left">
+                                        Real-time update of Ground truth, Odometry, Bel                            
+                                    </p> 
+                                    <iframe src = "https://www.youtube.com/embed/WUdDX8XwQ1c"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p align="left">
+                                        Real-time update of Ground truth, Odometry, Bel Bel_bar                               
+                                    </p>
+                                    <iframe src = "https://www.youtube.com/embed/PWqYwe3oeZU"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
