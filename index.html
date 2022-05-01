@@ -141,7 +141,7 @@
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal11">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
-                            </div><img class="img-fluid" src="assets/img/COMINGSOON.png" alt="Lab9"/>
+                            </div><img class="img-fluid" src="assets/img/Lab12.PNG" alt="Lab12"/>
                         </div>
                     </div>
                 </div>
@@ -1184,6 +1184,131 @@
                                         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
                                         <div class="divider-custom-line"></div>
                                     </div>
+                                    <p class="pre-wrap lead mb-3">Objective </p>
+                                    <p align="left">
+                                        In this lab, we are starting to bring what we implemented in the previous lab into real-life implementation. We are starting with the update step of the Bayes filter, in which we simply spin in place and collect sensor data while comparing them to the pre-cached values. Implementing real-life means more noise will be involved and we will perform our spinning more precisely to reduce those noise.
+
+                                    </p>  
+                                    <p class="pre-wrap lead mb-3">Localization in Simulation
+                                    </p>
+                                    <p align="left">
+                                        Before we moved to the real robot, we are verifying the simulation code again. This is exactly what we implemented last week, we are rerunning this time since we are using Vivek’s version now. As you can see, the <code>loc.bel</code> of the robot trajectory looks very similar to what I got last week. After verifying this, we can move on to the real robot.  
+                                    </p>  
+                                    <img class="img-fluid" src="assets/img/lab12sim.png">
+                                    <p class="pre-wrap lead mb-3">Base Code Setup
+                                    </p>
+                                    <p align="left">
+                                        Before implementing, I copied necessary files that enables bluetooth connetions from the previous lab. Those files include files “base_ble.py”, “ble.py”, “connection.yaml” and “cmd_types.py”. One can run the blocks with bluetooth conecction commands to test if base code is fully setup.
+                                    </p>  
+                                    <p class="pre-wrap lead mb-3">Perform_observation_loop implementation (Data collection)
+                                    </p>
+                                    <p align="left">
+                                        “<code>def perform_observation_loop(self, rot_vel=120)</code>” performs the observation loop behavior on the real robot. This function lets the robot to turn 360 degree in place while collecting data at each 20 degree intervals. Since observations_count is defined to be 18 (=360/20), this function outputs <code>sensor_ranges</code>, a column numpy array of the range values (meters).
+                                    </p>  
+                                    <p align="left">
+                                        In the beginning of the function I am sending commands to make the robot perform closed-loop turning for 20 degrees for 18 times. 
+
+                                    </p>  
+                                    <p align="left">
+                                        First, I called: <code>ble.send_command(CMD.SETPIDVALUE, "0.5|0|0")</code> This command set the PID value. I used a different PID value than the drifting lab because I intentionally wants the robot to overshot and come back to overcome the friction on the ground. When the robot starts from rest, it needs to turn extra hard to overcome higher stall current. However, when it is already moving, it is easier to address to the correct angle by turning to the opposite direction. 
+                                    </p>  
+                                    <p align="left">
+                                        Second, I called: <code>ble.send_command(CMD.SETSETPOINT, "0")</code> I also used this command to zero the setpoint. 
+                                    </p>  
+                                    <p align="left">
+                                        Lastly, I called: <code>ble.send_command(CMD.MAP,"18")</code> I am reusing the “map” command from lab 10, in which my robot was performing closed loop turning in small intervals as well. It takes an input take tells the robot how many time it should turn. 
+                                    </p>  
+                                    <p align="left">
+                                        On the Artemis side, the implementation of the PD controller is covered in lab6: 
+                                    </p>  
+                                    <img class="img-fluid" src="assets/img/Lab6:4.png">
+                                    <p align="left">
+                                        The reading distance process is the same as in the previous labs. We start ranging, wait until data is available, and store the read value into a variable, then stop ranging.
+                                    </p>  
+                                    <img class="img-fluid" src="assets/img/lab12c1.png">
+                                    <p align="left">
+                                        I implemented all mapping-related steps into the mapping commend. It takes the user input from the Bluetooth command for the number of data the robot collects. 
+                                    </p>  
+                                    <img class="img-fluid" src="assets/img/lab12c2.png">
+                                    <p align="left">
+                                        And then, I declared all the variables. Then, I am calculating the KP values after a new yaw value is ready. When the error is small enough (less than 0.2 degrees),  the robot brakes, toggles the led on Artemis and collects a TOF reading. When a reading is obtained, I increment the setpoint by 20 degrees until enough data point is collected. If the error is not small enough, the robot will turn to try to reach the setpoint. The TOF data are stored in an array that will be sent to the computer over bluetooth later. 
+
+                                    </p>  
+                                    <img class="img-fluid" src="assets/img/lab12c3.png">
+                                    <p align="left">
+                                        Back to the Python side, I ran a <code>time.sleep(13)</code> so the code pauses for 13 seconds, which is roughly the time the robot takes to spin for a full 360 degrees. 
+
+                                    </p>  
+                                    <iframe src = "https://www.youtube.com/embed/-Dd-lTT0Kpo"
+                                    width="560" height="315" frameborder="0" allowfullscreen></iframe>
+                                    <p class="pre-wrap lead mb-3">Perform_observation_loop implementation (Data Transmission)
+                                    </p>
+                                    <p align="left">
+                                        After we collected the data on the Artemis side, we now need to send them over. I first printed out "<code>start sending data</code>" for debugging purposes. Then I declared an empty array <code>readings =[]</code>.
+                                        Then we used the handler like how we used it since lab2. 
+                                        
+                                    </p>  
+                                    <img class="img-fluid" src="assets/img/lab12c4.png">
+                                    <p align="left">
+                                        We used it in multiple labs by now, so it should work reliable. However, there is a twist. In the previous lab, we can run this in its own block so that we can wait for it to run and check the updating readings array later. 
+
+                                    </p>  
+                                    <p align="left">
+                                        For this function, I used the code below to format the data nicely into the the 18 rows numpy arraries that I declared as output. Units are very important, I forgot to convert the mm readings into cm and that will result in a wrong prediction. 
+
+                                    </p>  
+                                    <img class="img-fluid" src="assets/img/lab12c5.png">
+                                    <p align="left">
+                                        I also bumped into a more serious problem. The Artemis needs time to send data over but the Python code is executed sequentially so when we are trying to access readings, we will get an out of bounds error. One may naturelly thinks that we can simply add a time.sleep function like we waited for the robot to spin. This time it is a bit different though. The handler needs to be triggered so that the Python code and receive the sent data. When the code is sleeping, nothing will happen. 
+                                    </p>  
+
+                                    <p align="left">
+                                        To solve this problem, I use the <code>await asyncio.sleep(2)</code> function to make the Python program idle but not blocked by anything. When we call the await function, it will ask the event loop to run something else while your await statement finishes its execution. In order to use the await asyncio.sleep function, we need to add the async keyword to the function defintion <code>RealRobot.perform_observation_loop()</code>, <code>BaseLocalization.get_observation_data()</code> and the await keyword to <code>perform_observation_loop()</code> and <code>loc.get_observation_data()</code>. With this fix, my code can be executed without errors. 
+                                    </p>  
+                                    <p class="pre-wrap lead mb-3">Demo & Result
+                                    </p>
+                                    <p align="left">
+                                        To demo, we simply just run the block that runs an update step of the Bayes filter. 
+                                        
+                                    </p>  
+                                    <p align="left">
+                                        1. The first point I spun my robot at was (-3 ft ,-2 ft ,0 deg), or (-0.914m, 0.610m, 0 deg). 
+                                        
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab12p1.png">
+                                    <p align="left">
+                                        The belief I got from the update step is (-0.914m, -0.610m, 30deg). The x and y are exactly the same and the angle is a bit off, but at a reasonable range of error.
+                                        
+                                    </p> 
+                                    <p align="left">
+                                        2. The second point is (5 ft,3 ft,0 deg),（1.524m, 0.9144m, 0deg)
+                                        
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab12p2.png">
+                                    <p align="left">
+                                        The belief I got from the update step is (-0.914m, 0.610m, -10deg). Both x and y are one index off and the angle is only 10 degree off. The belief is still relatively accurate. The source of error maybe that the data point from the square obstacle is scanned at a very sharp angle, which means when if the robot does not turn to the exact angle, the those 1-2 data point maybe very wrong. 
+                                        
+                                    </p> 
+                                    <p align="left">
+                                       3. The third point is (5 ft,-3 ft,0 deg), or (1.524m, -0.9144m, 0deg). 
+                                        
+                                    </p> 
+                                    <img class="img-fluid" src="assets/img/lab12p3.png">
+                                    <p align="left">
+                                        The belief I got from the update step is (1.524m, -0.9144m, -10deg). This point did really well  because it position is pretty unique and it does not have any surface at a sharp angle. 
+                                    </p> 
+                                    <p align="left">
+                                        4. The last point is (0 ft,3 ft,0 deg), or (0 m,0.914m,0 deg)
+                                         
+                                     </p> 
+                                     <img class="img-fluid" src="assets/img/lab12p4.png">
+
+                                     <p align="left">
+                                        The belief I got from the update step is (0 m,0.914m, -10deg). This point seems to be accurate but I got it after a couple of trails. This is the most challenging point because the positive x and negative y directions from this point are all quite far. Especially in negative y direction, the robot would miss that obstacle if it did not face perpendicular down at some point and collected that data point. This position is very unique, yet the robot needs to spin perfectly to capture all the unique data points. For this point, I also try to increase <code>sensor_sigma</code> value. It has more accurate convegences with a higher <code>sensor_sigma</code>. 
+                                         
+                                     </p> 
+                                    
+                                    
                                     <button class="btn btn-primary" href="#" data-dismiss="modal"><i class="fas fa-times fa-fw"></i>Close Window</button>
                                 </div>
                             </div>
