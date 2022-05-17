@@ -838,7 +838,7 @@
                                         <br><br>
                                         In the while loop, I first called the function <code>TOF_data</code>. It will start ranging and collect the distance data from the TOF. This will only update the variables when new data is available. Since this process is rather slow, we will need KF. <br>
                                         <img class="img-fluid" src="assets/img/lab81.png"><br>
-                                        Then, I called the KF function that is implemented in lab 7. The KF prediction will be stored in the <code>dis_predict</code> variable. It runs about 3 times faster than the TOF sensor so the robot can operate at high speed. 
+                                        Then, I called the KF function that is implemented in lab 7. The KF prediction will be stored in the <code>dis_predict</code> variable. It runs about 3 times faster than the TOF sensor so the robot can operate at high speed. When new TOF values are avaliable, KF will do both prediction and update step, otherwise it will only perform prediction step.
                                         If the predicted distance is less than 600mm, the set point will be set to 360. The initial PID values and the zero set point are set by Python commands: <code>ble.send_command(CMD.SETPIDVALUE, "4|0|0.5") ble.send_command(CMD.SETSETPOINT, "0")</code>. <br>
                                         <img class="img-fluid" src="assets/img/lab82.png"><br>
                                         For the detailed implementation of the PID or KF, see previous labs. 
