@@ -1360,7 +1360,7 @@
                             <div class="row justify-content-center">
                                 <div class="col-lg-8">
                                     <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab 13: Localization (real)</h2>
+                                    <h2 class="portfolio-modal-title text-secondary mb-0">Lab 13: Path Planning and Execution</h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
@@ -1369,126 +1369,102 @@
                                     </div>
                                     <p class="pre-wrap lead mb-3">Objective </p>
                                     <p align="left">
-                                        In this lab, we are starting to bring what we implemented in the previous lab into real-life implementation. We are starting with the update step of the Bayes filter, in which we simply spin in place and collect sensor data while comparing them to the pre-cached values. Implementing real-life means more noise will be involved and we will perform our spinning more precisely to reduce those noise.
-
+                                        Lab 13 is the most open ending lab. We can use whatever strategy we choose to achieve the objective of visiting all the way points in the map. The coordinate of the waypoints are  (-4, -3), (-2, -1), (1, -1), (2, -3), (5, -3), (5, -2), (5, 3), (0, 3), (0, 0). <br>
+                                        <img class="img-fluid" src="assets/img/lab131.png">
+                                        <br>
+                                        The red stars are the waypoint we need to get to and the green lines are the suggestive path. We do not have to travel on the green paths, but we do need to pass by all the red stars. I aim to at least pass by the tiles of the red stars centered it, which means have an accuracy of +-0.5ft.
                                     </p>  
-                                    <p class="pre-wrap lead mb-3">Localization in Simulation
+                                    <p class="pre-wrap lead mb-3">Brainstorming
                                     </p>
                                     <p align="left">
-                                        Before we moved to the real robot, we are verifying the simulation code again. This is exactly what we implemented last week, we are rerunning this time since we are using Vivek’s version now. As you can see, the <code>loc.bel</code> of the robot trajectory looks very similar to what I got last week. After verifying this, we can move on to the real robot.  
+                                        I came up with three possible solutions as soon as I learned about the objective.
+                                        <br> <br> 
+                                        Solution one: localizing at each waypoint and visit the next one when it is closed enough to the current target waypoint. <br>
+                                        The basic logit is: <br>              
+                                        1. Calculate the error between the current position and target position. If close enough, next waypoint in the list becomes the target position. If it is the last waypoint, break.
+                                        <br>2. Computer controls with current pose and target position.
+                                        <br>3. Execute commands to drive the robot
+                                        <br>4. Localize <br> <br>
+                                        Solution two: wall following <br>
+                                        <img class="img-fluid" src="assets/img/lab132.png">
+                                        <br>
+                                        The orange path shows the approximate ideal path of this solution. The waypoints are mostly on this path. We can use two TOF sensors to accomplish this. However, the turnings, especially the two turns circled pink, are very tricky to implement. <br><br>
+                                        Solution three: Precise distance and angle control<br>
+                                        This method has the simplest logic. Break the entire path by straight lines and turns, and then make the robot travel each straight line with the exact distance and turn the exact angles. <br>
+                                        <img class="img-fluid" src="assets/img/lab133.png"><br>
+                                        The robot should travel exactly these distances and turn at each right angles. 
+
                                     </p>  
-                                    <img class="img-fluid" src="assets/img/lab12sim.png">
-                                    <p class="pre-wrap lead mb-3">Base Code Setup
+                                    <p class="pre-wrap lead mb-3">Selection and Plan
                                     </p>
                                     <p align="left">
-                                        Before implementing, I copied necessary files that enables bluetooth connetions from the previous lab. Those files include files “base_ble.py”, “ble.py”, “connection.yaml” and “cmd_types.py”. One can run the blocks with bluetooth conecction commands to test if base code is fully setup.
+                                        I proposed those plans Jack Defay to talk through them. Since none of us have done task C in the stunt lab and we are not very sure about what to do with the two turns, we decided to evaluate more on the other two solutions. <br>
+                                        I made a list of potential problems with the solution one.
+                                        <br> 
+                                        1. Localization is very slow (it is fine for the demo, but it means with trial will take much longer) <br>
+                                        2. Localization is inconsistent. Based on data from the localization lab, it is hard for the robot to localize itself correctly the first time at spots that have not that unique environment. It can only localize to the center of the tiles, which is not the resolution we want. If one look at the data from lab 12 closely, even if the x and y coordinates are accurate, the angle is usually off by 10 to 20 degrees. 10 to 20 degrees will completely change the robot path, especially if it accumulate over time.<br> 
+                                        3. My robot has major mechanical issue so it can barely move straight within open loop control. However, if I am adding a lot of closed loop control, I may as well just do solution 3.<br>
+                                        With all these issues, I convinced Jack that solution 3 may be a better solution to pursue. <br>
+                                        From our previous implementation, we learnt that our robot is very buggy and can not do much things well. However, there are two sensors I can trust: gyroscope and TOF readings when distance is less than 1.5 meters. I decided to modify my game plan so that it only perform the two reliable actions: move a fixed distance of less than 1.5 meter and turning a specific angle.
+                                        <img class="img-fluid" src="assets/img/lab134.png"><br>
+                                        This diagram shows the improved strategy. The read bolded text shows the distance of the straight line it travels in milimeters. The red text in the circle indicates the angle it turns. The robot will travel a fixed distance using the wall as a reference point. The TOF that ensures the accurate drive distance locates in front of the robot. By making the robot drive forward and backward closed loop and breaking down long paths by turning 180 degree in the middle, the TOF sensor will never have to read a distance that is more than 1500mm. At this point, I have a feasible plan. Now it is the most challenging part, implementing it perfectly.
+
                                     </p>  
-                                    <p class="pre-wrap lead mb-3">Perform_observation_loop implementation (Data collection)
+                                    <p class="pre-wrap lead mb-3">Implementation
                                     </p>
                                     <p align="left">
-                                        “<code>def perform_observation_loop(self, rot_vel=120)</code>” performs the observation loop behavior on the real robot. This function lets the robot to turn 360 degree in place while collecting data at each 20 degree intervals. Since observations_count is defined to be 18 (=360/20), this function outputs <code>sensor_ranges</code>, a column numpy array of the range values (meters).
-                                    </p>  
-                                    <p align="left">
-                                        In the beginning of the function I am sending commands to make the robot perform closed-loop turning for 20 degrees for 18 times. 
-
-                                    </p>  
-                                    <p align="left">
-                                        First, I called: <code>ble.send_command(CMD.SETPIDVALUE, "0.5|0|0")</code> This command set the PID value. I used a different PID value than the drifting lab because I intentionally wants the robot to overshot and come back to overcome the friction on the ground. When the robot starts from rest, it needs to turn extra hard to overcome higher stall current. However, when it is already moving, it is easier to address to the correct angle by turning to the opposite direction. 
-                                    </p>  
-                                    <p align="left">
-                                        Second, I called: <code>ble.send_command(CMD.SETSETPOINT, "0")</code> I also used this command to zero the setpoint. 
-                                    </p>  
-                                    <p align="left">
-                                        Lastly, I called: <code>ble.send_command(CMD.MAP,"18")</code> I am reusing the “map” command from lab 10, in which my robot was performing closed loop turning in small intervals as well. It takes an input take tells the robot how many time it should turn. 
-                                    </p>  
-                                    <p align="left">
-                                        On the Artemis side, the implementation of the PD controller is covered in lab6: 
-                                    </p>  
-                                    <img class="img-fluid" src="assets/img/Lab6:4.png">
-                                    <p align="left">
-                                        The reading distance process is the same as in the previous labs. We start ranging, wait until data is available, and store the read value into a variable, then stop ranging.
-                                    </p>  
-                                    <img class="img-fluid" src="assets/img/lab12c1.png">
-                                    <p align="left">
-                                        I implemented all mapping-related steps into the mapping commend. It takes the user input from the Bluetooth command for the number of data the robot collects. 
-                                    </p>  
-                                    <img class="img-fluid" src="assets/img/lab12c2.png">
-                                    <p align="left">
-                                        And then, I declared all the variables. Then, I am calculating the KP values after a new yaw value is ready. When the error is small enough (less than 0.2 degrees),  the robot brakes, toggles the led on Artemis and collects a TOF reading. When a reading is obtained, I increment the setpoint by 20 degrees until enough data point is collected. If the error is not small enough, the robot will turn to try to reach the setpoint. The TOF data are stored in an array that will be sent to the computer over bluetooth later. 
-
-                                    </p>  
-                                    <img class="img-fluid" src="assets/img/lab12c3.png">
-                                    <p align="left">
-                                        Back to the Python side, I ran a <code>time.sleep(13)</code> so the code pauses for 13 seconds, which is roughly the time the robot takes to spin for a full 360 degrees. 
-
-                                    </p>  
-                                    <iframe src = "https://www.youtube.com/embed/-Dd-lTT0Kpo"
+                                        The essense of the strategy is to turn exact angles and travel exact distances. We will need PID control to do so. My stunt was the drifting one, so I already had PID turning implemented. I put it in a command that takes an int as the angle and implement the main while loop as how I did it in the previous labs. 
+                                        <img class="img-fluid" src="assets/img/lab135.png"><br>
+                                        Therefore, my first tiny task is implementing PID travel distance with the help of TOF sensor. 
+                                        I implemented it in a command call <code>TRAVELDISTANCE</code> that takes an integer, <code>travelDis</code>.
+                                        <br>
+                                        <img class="img-fluid" src="assets/img/lab136.png"><br>
+                                        After initialing local variables, I first obtained the distance the TOF is reading and stored the value in initDistance. Then, we know that the target distance (target TOF reading) would equal to initial distance minus the distance the robot needs to travel. Here, I make sure the <code>targetDistance</code> can also be a negative integer in the case of the robot driving backward. <br>
+                                        <img class="img-fluid" src="assets/img/lab137.png"><br>
+                                        To save time, I used the USB-C cable to debug so I called <code>serial.println</code> to print out important values.<br>
+                                        The while loop uses a flag “notReached” : <code>while (notReached) {}</code>. This flag will be marked as false only if we are sure the robot traveled the target distance.<br>
+                                        Very similar to the closed loop turning, I used the P and D terms. The detailed implementation is shown below.<br>
+                                        <img class="img-fluid" src="assets/img/lab138.png"><br>
+                                        When the error is less than 5 (when it is 5mm within the target travel distance it will brake and then check again to see if it still within 5mm. I implemented this tiny lock to take into consideration that the robot may drift a little bit after it breaks. Resolution is extremely important for our strategy so I took this extra step. When the notReached flag is set to <code>FALSE</code>, the car brakes and breaks out of the while loop.<br>
+                                        <img class="img-fluid" src="assets/img/lab139.png"><br>
+                                        Since time is limited, I did not include KF in this. Instead, I use the min and max function to limit the speed in a reasonable range so that the robot moves slow enough for the TOF sensor. <br>
+                                        Before I tried it in the real map, I made a mini path to verify if the car can perform <code>travelDistance</code> and <code>turnAngle</code> well.<br>
+                                        <iframe src = "https://www.youtube.com/embed/Yb1zewe-U50"
                                     width="560" height="315" frameborder="0" allowfullscreen></iframe>
-                                    <p class="pre-wrap lead mb-3">Perform_observation_loop implementation (Data Transmission)
-                                    </p>
-                                    <p align="left">
-                                        After we collected the data on the Artemis side, we now need to send them over. I first printed out "<code>start sending data</code>" for debugging purposes. Then I declared an empty array <code>readings =[]</code>.
-                                        Then we used the handler like how we used it since lab2. 
-                                        
+                                    <br>This is pretty good, but as you can see my robot has problem moving straight even if I tried various scaling factor between the left and right motors. This became an increasing problematic issue as one motor has mechanical damage and it went worse over time. Therefore, I need to add another close loop control section in my while loop. 
+                                    <br>
+                                    <img class="img-fluid" src="assets/img/lab1310.png"><br>
+                                    When the car is 3 degree off in any direction when it is moving forward, it will turn to the other side for a tiny amount. This ended up work well and make the robot remain straight.
+    <br>
+                                    Since the overall logic of my strategy is not that hard, my Python scrip is also simple. I preentered all the commands in a code block and simply execute it.<br>
+                                    For example: <br>
+                                    This is the command for moving backward for 609mm:<br>
+                                    <img class="img-fluid" src="assets/img/lab1311.png"><br>
+                                    This turns 90 degrees:<br>
+                                    <img class="img-fluid" src="assets/img/lab1312.png"><br>
+                                    With my accurate moving and turning, the accumulate error should be small enough that it can reach all way points. 
                                     </p>  
-                                    <img class="img-fluid" src="assets/img/lab12c4.png">
-                                    <p align="left">
-                                        We used it in multiple labs by now, so it should work reliable. However, there is a twist. In the previous lab, we can run this in its own block so that we can wait for it to run and check the updating readings array later. 
-
-                                    </p>  
-                                    <p align="left">
-                                        For this function, I used the code below to format the data nicely into the the 18 rows numpy arraries that I declared as output. Units are very important, I forgot to convert the mm readings into cm and that will result in a wrong prediction. 
-
-                                    </p>  
-                                    <img class="img-fluid" src="assets/img/lab12c5.png">
-                                    <p align="left">
-                                        I also bumped into a more serious problem. The Artemis needs time to send data over but the Python code is executed sequentially so when we are trying to access readings, we will get an out of bounds error. One may naturelly thinks that we can simply add a time.sleep function like we waited for the robot to spin. This time it is a bit different though. The handler needs to be triggered so that the Python code and receive the sent data. When the code is sleeping, nothing will happen. 
-                                    </p>  
-
-                                    <p align="left">
-                                        To solve this problem, I use the <code>await asyncio.sleep(2)</code> function to make the Python program idle but not blocked by anything. When we call the await function, it will ask the event loop to run something else while your await statement finishes its execution. In order to use the await asyncio.sleep function, we need to add the async keyword to the function defintion <code>RealRobot.perform_observation_loop()</code>, <code>BaseLocalization.get_observation_data()</code> and the await keyword to <code>perform_observation_loop()</code> and <code>loc.get_observation_data()</code>. With this fix, my code can be executed without errors. 
-                                    </p>  
+                                
                                     <p class="pre-wrap lead mb-3">Demo & Result
                                     </p>
                                     <p align="left">
-                                        To demo, we simply just run the block that runs an update step of the Bayes filter. 
-                                        
+                                        After hours of fine tuning and debugging, I am able to visit all the way points reliablely. Here is one of good demo videos after I tuned my robot well. They are all some what similar. <br>
+                                        <iframe src = "https://www.youtube.com/embed/XPhsKtfiV3c"
+                                        width="560" height="315" frameborder="0" allowfullscreen></iframe><br>
+                                        The green line is the ground truth of the robot in this demo. Its turning was a bit off at one of the angle and the error accumulated. Overall, this demo successfully addressed all the requirement set in the objective: traveling passed all the tile with the way points on it and therefore reached all the way points with an accuracy of +-1/2 ft. 
+                                        <img class="img-fluid" src="assets/img/lab1313.png"><br>
                                     </p>  
-                                    <p align="left">
-                                        1. The first point I spun my robot at was (-3 ft ,-2 ft ,0 deg), or (-0.914m, 0.610m, 0 deg). 
-                                        
-                                    </p> 
-                                    <img class="img-fluid" src="assets/img/lab12p1.png">
-                                    <p align="left">
-                                        The belief I got from the update step is (-0.914m, -0.610m, 30deg). The x and y are exactly the same and the angle is a bit off, but at a reasonable range of error. The surrounding of this position is quite asymmetric, and therefore, obtaining a good belif is easier.
-                                        
-                                    </p> 
-                                    <p align="left">
-                                        2. The second point is (5 ft,3 ft,0 deg),（1.524m, 0.9144m, 0deg)
-                                        
-                                    </p> 
-                                    <img class="img-fluid" src="assets/img/lab12p2.png">
-                                    <p align="left">
-                                        The belief I got from the update step is (-0.914m, 0.610m, -10deg). Both x and y are one index off and the angle is only 10 degree off. The belief is still relatively accurate. The source of error maybe that the data point from the square obstacle is scanned at a very sharp angle, which means when if the robot does not turn to the exact angle, the those 1-2 data point maybe very wrong. 
-                                        
-                                    </p> 
-                                    <p align="left">
-                                       3. The third point is (5 ft,-3 ft,0 deg), or (1.524m, -0.9144m, 0deg). 
-                                        
-                                    </p> 
-                                    <img class="img-fluid" src="assets/img/lab12p3.png">
-                                    <p align="left">
-                                        The belief I got from the update step is (1.524m, -0.9144m, -10deg). This point did really well  because it position is pretty unique and it does not have any surface at a sharp angle. The surrounding of this position is also quite asymmetric, and therefore, obtaining a good belif is easier.
-                                    </p> 
-                                    <p align="left">
-                                        4. The last point is (0 ft,3 ft,0 deg), or (0 m,0.914m,0 deg)
-                                         
-                                     </p> 
-                                     <img class="img-fluid" src="assets/img/lab12p4.png">
+                                    <p class="pre-wrap lead mb-3">Reflection
+                                    </p>
+                                    
 
                                      <p align="left">
-                                        The belief I got from the update step is (0 m,0.914m, -10deg). This point seems to be accurate but I got it after a couple of trails. This is the most challenging point because the positive x and negative y directions from this point are all quite far. Especially in negative y direction, the robot would miss that obstacle if it did not face perpendicular down at some point and collected that data point. This position is very unique, yet the robot needs to spin perfectly to capture all the unique data points. For this point, I also try to increase <code>sensor_sigma</code> value. It has more accurate convegences with a higher <code>sensor_sigma</code>. 
-                                         
+                                        My trajectory is pretty closed to the one I planned. After checking other demo videos on other students website, I think mine trajectory is one of the best one considering both speed and accuracy (how closed the robot got to way points). It was a pity that I did not use localization and bayes filiter in this lab. I have to give up using them due to inaccuracy of our sensors. To achieve the most optimal result, we sometimes need to promote our strengths and avoid our weakness.
+<br><br>This is what separates this class from other algorithms based robotics courses at Cornell. Some classes run everything on a simulator and others use off the shelf robots with fairly advance sensors. In Fast Robots, we used really cheap sensors to implement so impressive tasks. Therefore, it is always very important to acknowledge the shortcomings of our robot and try to work around it. For example, we used complimentary filter to smoothen the noisy gyroscope signal, we gave up using accelerometer due to motor noise, and drive the robot in both direction to get better TOF readings in the this lab. Learning about these realistic problems are priceless lessons. More importantly, growing our patient for debugging and gaining the experience of disecting problems while conqueuring them one by one will allow us to solve all kinds of technical hardware problems. In short, I had a wonderful learning experience in this course.
+
+<br><br>Lastly, I would like to thank Kirstin, Jonathan, Vivek, and Jade for joining this journey with me and my fellow classmates for chatting with me when I was stuck on problems. <br>
+
+<img class="img-fluid" src="assets/img/thanku.jpg"><br>
                                      </p> 
                                     
                                     
